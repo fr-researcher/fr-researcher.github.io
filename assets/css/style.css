@@ -167,7 +167,7 @@ body:not([data-theme]) .icon-sun { display: none; }
 }
 .hero-content { position: relative; max-width: 680px; }
 .hero-avatar {
-  width: 200px; height: 200px;
+  width: 400px; height: 400px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   display: flex; align-items: center; justify-content: center;
