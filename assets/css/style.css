@@ -167,7 +167,7 @@ body:not([data-theme]) .icon-sun { display: none; }
 }
 .hero-content { position: relative; max-width: 680px; }
 .hero-avatar {
-  width: 400px; height: 400px;
+  width: 200px; height: 200px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), var(--accent2));
   display: flex; align-items: center; justify-content: center;
@@ -268,18 +268,20 @@ body:not([data-theme]) .icon-sun { display: none; }
   padding: 48px 24px;
   display: flex;
   justify-content: center;
+  align-items: center;
   background: var(--bg2);
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .tesla-quote blockquote {
   max-width: 720px;
+  width: 100%;
   text-align: center;
   border-left: none;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
-}
-.tesla-quote blockquote p,
-.tesla-quote blockquote {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-style: italic;
   color: var(--text-muted);
   line-height: 1.7;
