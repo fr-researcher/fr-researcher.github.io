@@ -263,6 +263,37 @@ body:not([data-theme]) .icon-sun { display: none; }
 .social-row a:hover { color: var(--accent); border-color: var(--accent); background: var(--border); }
 .social-row svg { width: 16px; height: 16px; }
 
+/* Tesla quote */
+.tesla-quote {
+  padding: 48px 24px;
+  display: flex;
+  justify-content: center;
+  background: var(--bg2);
+}
+.tesla-quote blockquote {
+  max-width: 720px;
+  text-align: center;
+  border-left: none;
+  margin: 0;
+  padding: 0;
+}
+.tesla-quote blockquote p,
+.tesla-quote blockquote {
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.tesla-quote cite {
+  display: block;
+  margin-top: 12px;
+  font-size: .85rem;
+  font-style: normal;
+  font-family: var(--mono);
+  color: var(--accent);
+  letter-spacing: .05em;
+}
+
 /* Scroll hint */
 .scroll-hint {
   position: absolute;
