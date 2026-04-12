@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://fr-researcher.github.io/sitemap.xml
