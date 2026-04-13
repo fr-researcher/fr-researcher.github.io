@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Page Not Found | Francisco Rau</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    .not-found {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      gap: 1.2rem;
+    }
+    .not-found .code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(5rem, 20vw, 9rem);
+      font-weight: 500;
+      line-height: 1;
+      color: var(--accent, #7c6fff);
+      opacity: .25;
+    }
+    .not-found h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .not-found p {
+      opacity: .65;
+      max-width: 360px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="not-found">
+    <div class="code">404</div>
+    <h1>Page not found</h1>
+    <p>The page you're looking for doesn't exist or has been moved.</p>
+    <a href="/" class="btn btn-primary" style="margin-top:.5rem;">Go back home</a>
+  </div>
+</body>
+</html>
