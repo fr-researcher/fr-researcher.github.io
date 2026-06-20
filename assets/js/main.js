@@ -27,8 +27,11 @@ document.querySelectorAll('.pub-filter').forEach(btn => {
     document.querySelectorAll('.pub-filter').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const filter = btn.dataset.filter;
+    const pubTypes = ['journal', 'conference', 'preprint'];
     document.querySelectorAll('.pub-card').forEach(card => {
-      card.classList.toggle('hidden', filter !== 'all' && card.dataset.type !== filter);
+      const type = card.dataset.type;
+      const show = filter === 'all' || (filter === 'publication' ? pubTypes.includes(type) : type === filter);
+      card.classList.toggle('hidden', !show);
     });
   });
 });
