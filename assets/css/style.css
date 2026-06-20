@@ -414,7 +414,7 @@ body:not([data-theme]) .icon-sun { display: none; }
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  height: fit-content;
+  align-self: stretch;
 }
 .pub-type.journal  { background: rgba(63,185,80,.15); color: var(--accent2); }
 .pub-type.conference { background: rgba(63,185,80,.15); color: var(--accent2); }
