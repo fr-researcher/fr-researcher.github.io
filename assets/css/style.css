@@ -416,9 +416,9 @@ body:not([data-theme]) .icon-sun { display: none; }
   flex-shrink: 0;
   height: fit-content;
 }
-.pub-type.journal  { background: rgba(88,166,255,.15); color: var(--accent); }
+.pub-type.journal  { background: rgba(63,185,80,.15); color: var(--accent2); }
 .pub-type.conference { background: rgba(63,185,80,.15); color: var(--accent2); }
-.pub-type.preprint { background: rgba(247,129,102,.15); color: var(--accent3); }
+.pub-type.preprint { background: rgba(63,185,80,.15); color: var(--accent2); }
 .pub-type.dataset  { background: rgba(163,113,247,.15); color: #a371f7; }
 .pub-body { flex: 1; }
 .pub-title { font-size: 1rem; font-weight: 600; margin-bottom: 6px; line-height: 1.4; }
