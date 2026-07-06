@@ -8,17 +8,14 @@
     body { font-family: Inter, Arial, sans-serif; max-width: 780px; margin: 60px auto; padding: 0 24px 60px; background: #0d1117; color: #e6edf3; line-height: 1.7; }
     h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #f0f6fc; }
     .authors { color: #8b949e; font-size: 0.9rem; margin-bottom: 6px; }
-    .affiliation { color: #6e7681; font-size: 0.82rem; margin-bottom: 24px; }
-    .keywords { font-size: 0.82rem; color: #58a6ff; margin-bottom: 28px; }
-    .section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #6e7681; margin: 32px 0 10px; }
-    .abstract { background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px; padding: 16px 20px; font-size: 0.92rem; color: #c9d1d9; }
-    .summary { background: #161b22; border-radius: 8px; padding: 16px 20px; font-size: 0.92rem; color: #c9d1d9; }
-    .summary ul { margin: 8px 0 0 0; padding-left: 20px; }
-    .summary li { margin-bottom: 6px; }
-    .links { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
+    .affiliation { color: #6e7681; font-size: 0.82rem; margin-bottom: 16px; }
+    .keywords { font-size: 0.82rem; color: #58a6ff; margin-bottom: 16px; }
+    .links { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
     .links a { padding: 10px 22px; background: #21262d; border: 1px solid #30363d; border-radius: 8px; color: #58a6ff; text-decoration: none; font-size: 0.92rem; }
     .links a:hover { background: #30363d; }
-    hr { border: none; border-top: 1px solid #21262d; margin: 32px 0; }
+    .section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #6e7681; margin: 32px 0 10px; }
+    .abstract { background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px; padding: 16px 20px; font-size: 0.92rem; color: #c9d1d9; }
+    hr { border: none; border-top: 1px solid #21262d; margin: 24px 0; }
   </style>
 </head>
 <body>
@@ -33,27 +30,16 @@
   </div>
   <div class="keywords">Keywords: Incremental Learning &nbsp;·&nbsp; Network Traffic Management &nbsp;·&nbsp; Deep Learning</div>
 
+  <div class="links">
+    <a href="paper_IL_Network_Traffic_Management.pdf" target="_blank">📄 Paper (PDF)</a>
+    <a href="poster_IL_Network_Traffic_Management.pdf" target="_blank">🖼 Poster (PDF)</a>
+  </div>
+
   <hr>
 
   <div class="section-title">Abstract</div>
   <div class="abstract">
     Network traffic management systems must continuously evolve to new applications without degrading the performance of previously learned categories. This paper evaluates a class-incremental learning strategy that combines rehearsal-based replay with fixed feature representation. Starting from a Fully Connected Neural Network (FCNN) trained on six traffic classes using flow-level features, we freeze all feature-extraction layers and retrain only a newly initialized classification head. Incremental updates are performed using all samples from the incoming class(es) plus a compact, stratified rehearsal buffer containing 10% of the original training set. Experiments on 46,729 labeled flows assess two scenarios: adding one class and adding two classes, and compare against full retraining as an upper bound. The proposed approach reaches 87.90% and 87.72% test accuracy (weighted F1 of 0.877 and 0.875) with minimal forgetting (gaps up to 1.13%). Incremental updates reduce training time by 89–92% and decrease training-data storage requirements by up to 76.88%, supporting deployment in dynamic network environments.
-  </div>
-
-  <div class="section-title">Summary</div>
-  <div class="summary">
-    <ul>
-      <li>Proposes a class-incremental learning method for network traffic classifiers that avoids full retraining when new traffic categories appear.</li>
-      <li>Freezes feature-extraction layers of a pre-trained FCNN and only retrains the classification head on new data plus a small rehearsal buffer (10% of original data).</li>
-      <li>Evaluated on 46,729 labeled flows across two scenarios: adding 1 new class and adding 2 new classes simultaneously.</li>
-      <li>Achieves up to 87.90% accuracy with minimal catastrophic forgetting (≤1.13% degradation on old classes).</li>
-      <li>Reduces training time by 89–92% and storage requirements by up to 76.88% compared to full retraining.</li>
-    </ul>
-  </div>
-
-  <div class="links">
-    <a href="paper_IL_Network_Traffic_Management.pdf" target="_blank">📄 Paper (PDF)</a>
-    <a href="poster_IL_Network_Traffic_Management.pdf" target="_blank">🖼 Poster (PDF)</a>
   </div>
 
 </body>
