@@ -1,47 +1,592 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Incremental Learning in Network Traffic Management</title>
-  <style>
-    body { font-family: Inter, Arial, sans-serif; max-width: 780px; margin: 60px auto; padding: 0 24px 60px; background: #0d1117; color: #e6edf3; line-height: 1.7; }
-    h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: #f0f6fc; }
-    .authors { color: #8b949e; font-size: 0.9rem; margin-bottom: 6px; }
-    .affiliation { color: #6e7681; font-size: 0.82rem; margin-bottom: 16px; }
-    .keywords { font-size: 0.82rem; color: #58a6ff; margin-bottom: 16px; }
-    .links { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
-    .links a { padding: 10px 22px; background: #21262d; border: 1px solid #30363d; border-radius: 8px; color: #58a6ff; text-decoration: none; font-size: 0.92rem; }
-    .links a:hover { background: #30363d; }
-    .section-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #6e7681; margin: 32px 0 10px; }
-    .abstract { background: #161b22; border-left: 3px solid #58a6ff; border-radius: 4px; padding: 16px 20px; font-size: 0.92rem; color: #c9d1d9; }
-    hr { border: none; border-top: 1px solid #21262d; margin: 24px 0; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Incremental Learning in Network Traffic Management</title>
+<style>
+  :root{
+    --bg:#05070d; --bg2:#0a0e1a;
+    --cyan:#4ce0ff; --violet:#8a6bff; --pink:#ff5fb0; --green:#3ddc84; --amber:#ffb454;
+    --text:#dbe4ff; --dim:#5b6788;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, #14224a55, transparent 60%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    color:var(--text); font-family:'Segoe UI',Inter,Arial,sans-serif;
+    display:flex; flex-direction:column; align-items:center; padding:40px 16px 70px;
+  }
+  h1{font-size:1.25rem; font-weight:700; margin:0 0 4px; text-align:center;
+     background:linear-gradient(90deg,var(--cyan),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .sub{color:var(--dim); font-size:.83rem; margin-bottom:22px; text-align:center; max-width:680px;}
+
+  .stage{
+    position:relative; width:100%; max-width:1120px;
+    border:1px solid #1c2740; border-radius:16px; background:#080b14;
+    box-shadow:0 0 60px -20px #4ce0ff22 inset, 0 20px 50px -30px #000;
+    padding:10px 0 0;
+  }
+
+  svg{display:block; width:100%; height:auto;}
+
+  .zone-label{font-size:11px; fill:var(--dim); letter-spacing:1.6px; text-transform:uppercase;}
+  .layer-tag{font-size:9.5px; fill:#7d8ab0;}
+  .layer-count{font-size:9px; fill:#4a5578;}
+
+  .edge{stroke:#26325a; stroke-width:1; opacity:.55;}
+  .edge.backbone{stroke:#31406e;}
+  .edge.head{stroke:#5a3d1f;}
+
+  .pulse-edge{stroke:var(--cyan); stroke-width:1.6; filter:drop-shadow(0 0 3px var(--cyan)); opacity:0;}
+  .pulse-edge.pink{stroke:var(--pink); filter:drop-shadow(0 0 3px var(--pink));}
+  .pulse-edge.green{stroke:var(--green); filter:drop-shadow(0 0 3px var(--green));}
+
+  .buffer-box{fill:#3ddc8408; stroke:#3ddc8477; stroke-width:1; stroke-dasharray:5 4;}
+  .buffer-box.active{animation:bufferGlow .7s ease;}
+  @keyframes bufferGlow{0%{fill:#3ddc8408}40%{fill:#3ddc8433}100%{fill:#3ddc8408}}
+  .buffer-dot{fill:var(--green); filter:drop-shadow(0 0 3px var(--green));}
+  .buffer-label{font-size:9.5px; fill:#7fe3ac; font-weight:600;}
+  .buffer-sub{font-size:8px; fill:#4a7d63;}
+
+  .node{fill:#131c33; stroke:#33436e; stroke-width:1;}
+  .node.lit{animation:nodeLit .55s ease forwards;}
+  @keyframes nodeLit{0%{fill:#131c33; stroke:#33436e;}30%{fill:#bfeeff; stroke:#4ce0ff;}100%{fill:#131c33; stroke:#33436e;}}
+  .node.head-node{fill:#241a10; stroke:#7a4f24;}
+  .node.head-node.lit{animation:nodeLitHead .55s ease forwards;}
+  @keyframes nodeLitHead{0%{fill:#241a10; stroke:#7a4f24;}30%{fill:#ffe2b3; stroke:#ffb454;}100%{fill:#241a10; stroke:#7a4f24;}}
+
+  .frozen-box{fill:none; stroke:#2c3c68; stroke-width:1; stroke-dasharray:5 4;}
+  .head-box{fill:none; stroke:#7a4f24; stroke-width:1; stroke-dasharray:5 4;}
+  .snow{font-size:15px; fill:#8fb4ff;}
+
+  .out-row{font-size:10.5px; fill:var(--dim);}
+  .out-row.active{fill:#fff;}
+  .bar-bg{fill:#141c30;}
+  .bar-fill{fill:url(#barGrad); transition:width .35s ease;}
+  .bar-fill.pink{fill:url(#barGradPink);}
+
+  .banner{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(.85);
+    background:#0a0f1dee; border:1px solid var(--pink); border-radius:14px;
+    padding:16px 26px; text-align:center; z-index:10; opacity:0; pointer-events:none;
+    box-shadow:0 0 40px -6px var(--pink); max-width:420px;
+  }
+  .banner .big{font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:4px;}
+  .banner .small{font-size:.72rem; color:#ffb9dd; line-height:1.5;}
+  .banner.show{animation:bannerShow 3s ease forwards;}
+  @keyframes bannerShow{
+    0%{opacity:0; transform:translate(-50%,-50%) scale(.85);}
+    10%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+    85%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+    100%{opacity:0; transform:translate(-50%,-50%) scale(.92);}
+  }
+
+  .legend{display:flex; flex-wrap:wrap; gap:18px; margin-top:20px; font-size:.72rem; color:var(--dim); max-width:920px; justify-content:center;}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .legend i{width:10px; height:10px; border-radius:3px; display:inline-block;}
+
+  .results{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:28px; width:100%; max-width:980px;}
+  @media (max-width:760px){ .results{grid-template-columns:1fr;} }
+  .result-card{background:#0d1220; border:1px solid #1c2740; border-radius:12px; padding:20px 18px; text-align:center;}
+  .result-card h4{font-size:.95rem; font-weight:700; color:#f0f6fc; margin:0 0 4px;}
+  .result-card .rc-sub{font-style:italic; font-size:.72rem; color:#9fb0d0; margin-bottom:8px;}
+  .result-card .rc-format{font-size:.62rem; color:var(--dim); margin-bottom:12px;}
+  .result-row{font-size:.74rem; color:#c4cfe6; padding:6px 0; border-top:1px solid #182137; text-align:left;}
+  .result-row:first-of-type{border-top:none;}
+  .result-row b{color:#f0f6fc;}
+  .result-row .pct{font-weight:800; color:var(--green);}
+  .result-row .pct.warn{color:var(--amber);}
+
+  .caption{max-width:700px; text-align:center; color:var(--dim); font-size:.78rem; margin-top:24px; line-height:1.6;}
+
+  /* ---- paper header: title / authors / abstract / buttons ---- */
+  .paper-header{max-width:780px; width:100%; margin-bottom:44px; padding-bottom:36px; border-bottom:1px solid #1c2740;}
+  .paper-title{font-size:1.35rem; font-weight:700; line-height:1.4; color:#f0f6fc; margin:0 0 12px; text-align:left;}
+  .paper-authors{color:#9fb0d0; font-size:.9rem; margin-bottom:6px;}
+  .paper-affiliation{color:var(--dim); font-size:.8rem; margin-bottom:14px; line-height:1.6;}
+  .paper-keywords{font-size:.8rem; color:var(--cyan); margin-bottom:18px;}
+  .paper-links{display:flex; gap:12px; margin-bottom:26px; flex-wrap:wrap;}
+  .paper-links a{padding:9px 20px; background:#12182a; border:1px solid #263258; border-radius:8px; color:var(--cyan); text-decoration:none; font-size:.88rem;}
+  .paper-links a:hover{background:#1a2338; border-color:var(--cyan);}
+  .paper-section-title{font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--dim); margin:0 0 10px;}
+  .paper-abstract{background:#0d1220; border-left:3px solid var(--cyan); border-radius:4px; padding:16px 20px; font-size:.88rem; color:#c4cfe6; line-height:1.7;}
+</style>
 </head>
 <body>
 
-  <h1>Incremental Learning in Network Traffic Management: A Fixed-Representation Rehearsal Approach</h1>
+  <div class="paper-header">
+    <h1 class="paper-title">Incremental Learning in Network Traffic Management: A Fixed-Representation Rehearsal Approach</h1>
+    <div class="paper-authors">Francisco Rau, Petia Georgieva, Carlos Herranz, Iñaki Val, Joaquin Perez</div>
+    <div class="paper-affiliation">
+      MaxLinear, Inc., Valencia, Spain &nbsp;·&nbsp;
+      Instituto de Telecomunicações / IEETA, University of Aveiro, Portugal &nbsp;·&nbsp;
+      Electronic Engineering Department, Universitat de València, Spain
+    </div>
+    <div class="paper-keywords">Keywords: Incremental Learning &nbsp;·&nbsp; Network Traffic Management &nbsp;·&nbsp; Deep Learning</div>
 
-  <div class="authors">Francisco Rau, Petia Georgieva, Carlos Herranz, Iñaki Val, Joaquin Perez</div>
-  <div class="affiliation">
-    MaxLinear, Inc., Valencia, Spain &nbsp;·&nbsp;
-    Instituto de Telecomunicações / IEETA, University of Aveiro, Portugal &nbsp;·&nbsp;
-    Electronic Engineering Department, Universitat de València, Spain
+    <div class="paper-links">
+      <a href="paper_IL_Network_Traffic_Management.pdf" target="_blank">📄 Paper (PDF)</a>
+      <a href="poster_IL_Network_Traffic_Management.pdf" target="_blank">🖼 Poster (PDF)</a>
+      <a href="LightningTalk_IL_Network_Traffic_Management.pdf" target="_blank">⚡ Lightning Talk (PDF)</a>
+    </div>
+
+    <div class="paper-section-title">Abstract</div>
+    <div class="paper-abstract">
+      Network traffic management systems must continuously evolve to new applications without degrading the performance of previously learned categories. This paper evaluates a class-incremental learning strategy that combines rehearsal-based replay with fixed feature representation. Starting from a Fully Connected Neural Network (FCNN) trained on six traffic classes using flow-level features, we freeze all feature-extraction layers and retrain only a newly initialized classification head. Incremental updates are performed using all samples from the incoming class(es) plus a compact, stratified rehearsal buffer containing 10% of the original training set. Experiments on 46,729 labeled flows assess two scenarios: adding one class and adding two classes, and compare against full retraining as an upper bound. The proposed approach reaches 87.90% and 87.72% test accuracy (weighted F1 of 0.877 and 0.875) with minimal forgetting (gaps up to 1.13%). Incremental updates reduce training time by 89–92% and decrease training-data storage requirements by up to 76.88%, supporting deployment in dynamic network environments.
+    </div>
   </div>
-  <div class="keywords">Keywords: Incremental Learning &nbsp;·&nbsp; Network Traffic Management &nbsp;·&nbsp; Deep Learning</div>
 
-  <div class="links">
-    <a href="paper_IL_Network_Traffic_Management.pdf" target="_blank">📄 Paper (PDF)</a>
-    <a href="poster_IL_Network_Traffic_Management.pdf" target="_blank">🖼 Poster (PDF)</a>
-    <a href="LightningTalk_IL_Network_Traffic_Management.pdf" target="_blank">⚡ Lightning Talk (PDF)</a>
+  <h1>Fixed-Representation Rehearsal — FCNN Architecture</h1>
+  <p class="sub">29-dim flow features → pyramidal FCNN backbone (2048→1024→768→512→256, frozen after base training) → classification head retrained on rehearsal buffer + new-class samples.</p>
+
+  <div class="stage">
+    <svg viewBox="0 0 1120 545" xmlns="http://www.w3.org/2000/svg" id="svgRoot">
+      <defs>
+        <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4ce0ff"/><stop offset="100%" stop-color="#8a6bff"/>
+        </linearGradient>
+        <linearGradient id="barGradPink" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#ff5fb0"/><stop offset="100%" stop-color="#ff9d5c"/>
+        </linearGradient>
+        <pattern id="neuronPattern" width="7" height="7" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.9" fill="#3d4d80"/>
+        </pattern>
+        <linearGradient id="shimmerGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4ce0ff" stop-opacity="0"/>
+          <stop offset="45%" stop-color="#4ce0ff" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#bfeeff" stop-opacity=".55"/>
+          <stop offset="55%" stop-color="#4ce0ff" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#4ce0ff" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+
+      <g id="denseLayer"></g>
+
+      <!-- zone labels -->
+      <text x="75" y="24" text-anchor="middle" class="zone-label">Input</text>
+      <text x="452" y="24" text-anchor="middle" class="zone-label">Frozen Feature-Extraction Backbone (❄ layers 1–5, 2048→256 neurons)</text>
+      <text x="1000" y="24" text-anchor="middle" class="zone-label">Classification Head</text>
+
+      <!-- frozen backbone bounding box -->
+      <rect class="frozen-box" x="185" y="34" width="535" height="410" rx="14"></rect>
+      <text x="452" y="50" text-anchor="middle" class="snow">❄</text>
+
+      <!-- head bounding box -->
+      <rect class="head-box" id="headBox" x="905" y="34" width="175" height="410" rx="14"></rect>
+
+      <!-- rehearsal buffer: M, 10% stratified sample of the base training set -->
+      <text x="992" y="470" text-anchor="middle" class="zone-label">Rehearsal Buffer</text>
+      <rect class="buffer-box" id="bufferBox" x="905" y="478" width="175" height="46" rx="10"></rect>
+      <circle cx="922" cy="498" r="4" class="buffer-dot"></circle>
+      <text x="934" y="495" class="buffer-label">M · 10% of base set</text>
+      <text x="934" y="509" class="buffer-sub">replayed each incremental update</text>
+
+      <g id="edgesBackbone"></g>
+      <g id="edgesHead"></g>
+      <g id="pulseLayer"></g>
+      <g id="nodesLayer"></g>
+      <g id="outputLayer"></g>
+
+    </svg>
+
+    <div class="banner" id="banner">
+      <div class="big">⚡ New classes arrive: File Transfer + C2</div>
+      <div class="small">Backbone (layers 1–5) stays frozen · 2 new output neurons initialized · head retrains on the rehearsal buffer (M) + new-class samples (scenario 6+2, 8 classes)</div>
+    </div>
   </div>
 
-  <hr>
-
-  <div class="section-title">Abstract</div>
-  <div class="abstract">
-    Network traffic management systems must continuously evolve to new applications without degrading the performance of previously learned categories. This paper evaluates a class-incremental learning strategy that combines rehearsal-based replay with fixed feature representation. Starting from a Fully Connected Neural Network (FCNN) trained on six traffic classes using flow-level features, we freeze all feature-extraction layers and retrain only a newly initialized classification head. Incremental updates are performed using all samples from the incoming class(es) plus a compact, stratified rehearsal buffer containing 10% of the original training set. Experiments on 46,729 labeled flows assess two scenarios: adding one class and adding two classes, and compare against full retraining as an upper bound. The proposed approach reaches 87.90% and 87.72% test accuracy (weighted F1 of 0.877 and 0.875) with minimal forgetting (gaps up to 1.13%). Incremental updates reduce training time by 89–92% and decrease training-data storage requirements by up to 76.88%, supporting deployment in dynamic network environments.
+  <div class="legend">
+    <span><i style="background:#4ce0ff"></i> Forward pass (known class)</span>
+    <span><i style="background:#ff5fb0"></i> Forward pass (new class)</span>
+    <span><i style="background:#3ddc84"></i> Rehearsal sample (10% replay)</span>
+    <span><i style="background:#33436e"></i> Frozen backbone weights (❄)</span>
+    <span><i style="background:#ffb454"></i> Trainable head weights</span>
   </div>
+
+  <div class="paper-section-title" style="margin-top:8px;">Results — from scratch vs incremental</div>
+  <div class="results">
+    <div class="result-card">
+      <h4>Training time</h4>
+      <div class="rc-sub">Time to train the model</div>
+      <div class="rc-format">from scratch → incremental : reduction</div>
+      <div class="result-row">7 → 6 + 1 classes&nbsp; : &nbsp;<b>1,696 s → 133 s</b>&nbsp; : &nbsp;<span class="pct">92.16%</span></div>
+      <div class="result-row">8 → 6 + 2 classes&nbsp; : &nbsp;<b>1,872 s → 192 s</b>&nbsp; : &nbsp;<span class="pct">89.72%</span></div>
+    </div>
+
+    <div class="result-card">
+      <h4>Storage</h4>
+      <div class="rc-sub">Memory of the training data</div>
+      <div class="rc-format">from scratch → incremental : reduction</div>
+      <div class="result-row">7 → 6 + 1 classes&nbsp; : &nbsp;<b>9.2 MB → 2.1 MB</b>&nbsp; : &nbsp;<span class="pct">76.88%</span></div>
+      <div class="result-row">8 → 6 + 2 classes&nbsp; : &nbsp;<b>10.6 MB → 3.4 MB</b>&nbsp; : &nbsp;<span class="pct">67.50%</span></div>
+    </div>
+
+    <div class="result-card">
+      <h4>Forgetting</h4>
+      <div class="rc-sub">Accuracy lost on old classes when adding new</div>
+      <div class="rc-format">old-class accuracy, from scratch → incremental : gap</div>
+      <div class="result-row">7 → 6 + 1 classes&nbsp; : &nbsp;<b>86.4% → 85.8%</b>&nbsp; : &nbsp;<span class="pct warn">0.56%</span></div>
+      <div class="result-row">8 → 6 + 2 classes&nbsp; : &nbsp;<b>86.0% → 84.9%</b>&nbsp; : &nbsp;<span class="pct warn">1.13%</span></div>
+    </div>
+  </div>
+  <p style="text-align:center; color:var(--dim); font-size:.68rem; margin-top:12px;">
+    As presented in the Lightning Talk (CSNDSP 2026). The live diagram above animates scenario 6+2 (File Transfer + C2 added together, 8 classes total).
+  </p>
+
+  <p class="caption">
+    Layer widths mirror the actual FCNN from the paper —
+    Input(29) → H1(2048) → H2(1024) → H3(768) → H4(512) → H5(256, output of f<sub>θ</sub>) → Head g<sub>φ</sub>(C classes, softmax).
+    Node counts per layer are downsampled for legibility; real neuron counts are labeled beneath each layer.
+Periodically, two new classes ("File Transfer", "C2") are introduced — scenario 6+2 from the paper: only the head is
+    re-instantiated and retrained on D<sub>inc</sub> = M ∪ D<sub>new</sub> (green pulses = samples drawn from the rehearsal buffer M,
+    shown bottom-right), while θ (backbone) remains frozen — exactly as in Eq. (1)–(2) of the paper.
+  </p>
+
+<script>
+const svg = document.getElementById('svgRoot');
+const NS = 'http://www.w3.org/2000/svg';
+const edgesBackboneG = document.getElementById('edgesBackbone');
+const edgesHeadG = document.getElementById('edgesHead');
+const pulseLayerG = document.getElementById('pulseLayer');
+const nodesLayerG = document.getElementById('nodesLayer');
+const outputLayerG = document.getElementById('outputLayer');
+const headBox = document.getElementById('headBox');
+const banner = document.getElementById('banner');
+const denseLayerG = document.getElementById('denseLayer');
+
+// Layer definitions: x position, visual node count, real neuron count, label
+function widthForReal(real){
+  const minL = Math.log2(256), maxL = Math.log2(2048);
+  const t = (Math.log2(real) - minL) / (maxL - minL);
+  return 28 + t*46; // 28..74 px
+}
+
+const layers = [
+  { x: 75,   n: 29, real: 29,   tag: 'Input',  sub: '29 features',                     dense:false },
+  { x: 235,  n: 18, real: 2048, tag: 'H1',     sub: '2048 · ReLU · BN · Drop .30',      dense:true },
+  { x: 355,  n: 14, real: 1024, tag: 'H2',     sub: '1024 · ReLU · BN · Drop .25',      dense:true },
+  { x: 470,  n: 11, real: 768,  tag: 'H3',     sub: '768 · ReLU · BN · Drop .20',       dense:true },
+  { x: 580,  n: 8,  real: 512,  tag: 'H4',     sub: '512 · ReLU · BN · Drop .15',       dense:true },
+  { x: 690,  n: 6,  real: 256,  tag: 'H5',     sub: '256 · ReLU · BN · Drop .10  (fθ)', dense:true },
+];
+const backboneLayerCount = layers.length; // indices 0..5, edges 0-1,1-2,...4-5 are within backbone (5 edge-sets),
+// edge 5->head is the trainable connection (g_phi)
+
+const TOP = 60, BOTTOM = 430;
+
+function layerNodeY(count){
+  const ys = [];
+  const usable = BOTTOM - TOP;
+  for(let i=0;i<count;i++){
+    ys.push(TOP + (usable/(count-1||1))*i);
+  }
+  return ys;
+}
+
+// classes for the output/head
+let classes = [
+  {name:'Video Stream', color:'#4ce0ff'},
+  {name:'Roblox',       color:'#8a6bff'},
+  {name:'Spotify',      color:'#3ddc84'},
+  {name:'Teams',        color:'#ffb454'},
+  {name:'Youtube',      color:'#4ce0ff'},
+  {name:'Web',          color:'#8a6bff'},
+];
+
+let nodePositions = []; // per layer array of {x,y}
+let outputPositions = [];
+let layerBounds = {}; // per dense layer tag: {x,y,width,height,cx}
+
+function flashBlock(tag, colorClass){
+  const b = layerBounds[tag];
+  if(!b) return;
+  const color = colorClass==='pink' ? '#ff5fb0' : (colorClass==='green' ? '#3ddc84' : '#4ce0ff');
+  const glow = document.createElementNS(NS,'rect');
+  glow.setAttribute('x', b.x); glow.setAttribute('y', b.y);
+  glow.setAttribute('width', b.width); glow.setAttribute('height', b.height);
+  glow.setAttribute('rx', 8);
+  glow.setAttribute('fill', color);
+  glow.style.opacity = '0';
+  glow.style.mixBlendMode = 'screen';
+  pulseLayerG.appendChild(glow);
+  glow.animate(
+    [{opacity:0},{opacity:.55,offset:.35},{opacity:0}],
+    {duration:420, easing:'ease'}
+  );
+  const rim = document.getElementById('denseRect-'+tag);
+  if(rim){
+    rim.animate(
+      [{stroke:'#243258'},{stroke:color,offset:.35},{stroke:'#243258'}],
+      {duration:420, easing:'ease'}
+    );
+  }
+  setTimeout(()=>glow.remove(), 430);
+}
+
+function buildStatic(){
+  nodePositions = layers.map(L => {
+    const ys = layerNodeY(L.n);
+    return ys.map(y => ({x:L.x, y}));
+  });
+
+  // draw layer tags
+  layers.forEach(L=>{
+    const t1 = document.createElementNS(NS,'text');
+    t1.setAttribute('x', L.x); t1.setAttribute('y', TOP-14);
+    t1.setAttribute('text-anchor','middle'); t1.setAttribute('class','layer-tag');
+    t1.textContent = L.tag;
+    nodesLayerG.appendChild(t1);
+
+    const t2 = document.createElementNS(NS,'text');
+    t2.setAttribute('x', L.x); t2.setAttribute('y', BOTTOM+34);
+    t2.setAttribute('text-anchor','middle'); t2.setAttribute('class','layer-count');
+    t2.textContent = L.sub;
+    nodesLayerG.appendChild(t2);
+  });
+
+  // draw a subtle static density texture behind each hidden layer (no motion/shimmer),
+  // just a backdrop hinting at the real neuron count (2048/1024/768/512/256), plus
+  // real, visible nodes+edges on top so the connections are actually legible.
+  layers.forEach(L=>{
+    if(!L.dense) return;
+    const w = widthForReal(L.real);
+    const bx = L.x - w/2, by = TOP-6, bw = w, bh = (BOTTOM-TOP)+12;
+    layerBounds[L.tag] = {x:bx, y:by, width:bw, height:bh, cx:L.x};
+
+    const rect = document.createElementNS(NS,'rect');
+    rect.setAttribute('x', bx); rect.setAttribute('y', by);
+    rect.setAttribute('width', bw); rect.setAttribute('height', bh);
+    rect.setAttribute('rx', 8);
+    rect.setAttribute('fill', 'url(#neuronPattern)');
+    rect.setAttribute('opacity', '0.5');
+    rect.setAttribute('stroke', '#243258');
+    rect.setAttribute('stroke-width', '1');
+    rect.setAttribute('id', 'denseRect-'+L.tag);
+    denseLayerG.appendChild(rect);
+  });
+
+  // draw visible connecting lines between every consecutive layer (Input->H1->H2->H3->H4->H5),
+  // sampled but denser (5 targets per node) so the mesh of connections is clearly legible.
+  for(let li=0; li<layers.length-1; li++){
+    const from = nodePositions[li], to = nodePositions[li+1];
+    from.forEach((p,i)=>{
+      const targets = new Set();
+      const base = Math.floor(i/from.length*to.length);
+      for(let d=-2; d<=2; d++) targets.add(((base+d)%to.length+to.length)%to.length);
+      targets.forEach(ti=>{
+        const q = to[ti];
+        const line = document.createElementNS(NS,'line');
+        line.setAttribute('x1',p.x); line.setAttribute('y1',p.y);
+        line.setAttribute('x2',q.x); line.setAttribute('y2',q.y);
+        line.setAttribute('class','edge backbone');
+        line.dataset.li = li;
+        edgesBackboneG.appendChild(line);
+      });
+    });
+  }
+
+  // draw visible nodes for every layer (Input has its real 29; hidden layers use
+  // sampled representative neurons on top of the density texture)
+  nodePositions.forEach((layerPts, li)=>{
+    layerPts.forEach((p,ni)=>{
+      const c = document.createElementNS(NS,'circle');
+      c.setAttribute('cx',p.x); c.setAttribute('cy',p.y); c.setAttribute('r', li===0?3.4:3.8);
+      c.setAttribute('class','node');
+      c.dataset.li = li; c.dataset.ni = ni;
+      nodesLayerG.appendChild(c);
+    });
+  });
+}
+
+function layoutOutput(){
+  // remove old
+  outputLayerG.innerHTML = '';
+  const lastBackbone = nodePositions[nodePositions.length-1];
+  const headX = 960;
+  const n = classes.length;
+  const ys = layerNodeY(n);
+  outputPositions = ys.map(y=>({x:headX, y}));
+
+  // resize head box to fit
+  headBox.setAttribute('height', Math.max(410, (BOTTOM-TOP)+40));
+
+  // edges from H5 to head (trainable) - sparse-ish, connect each H5 node to each output (still moderate count)
+  edgesHeadG.innerHTML = '';
+  lastBackbone.forEach(p=>{
+    outputPositions.forEach(q=>{
+      const line = document.createElementNS(NS,'line');
+      line.setAttribute('x1',p.x); line.setAttribute('y1',p.y);
+      line.setAttribute('x2',q.x); line.setAttribute('y2',q.y);
+      line.setAttribute('class','edge head');
+      edgesHeadG.appendChild(line);
+    });
+  });
+
+  // output nodes + labels + softmax bars
+  classes.forEach((cl,i)=>{
+    const p = outputPositions[i];
+    const c = document.createElementNS(NS,'circle');
+    c.setAttribute('cx',p.x); c.setAttribute('cy',p.y); c.setAttribute('r',5);
+    c.setAttribute('class','node head-node');
+    c.dataset.ci = i;
+    outputLayerG.appendChild(c);
+
+    const label = document.createElementNS(NS,'text');
+    label.setAttribute('x', p.x+14); label.setAttribute('y', p.y-6);
+    label.setAttribute('class','out-row'); label.dataset.ci = i;
+    label.textContent = cl.name + (cl.isNew ? '  •  NEW' : '');
+    outputLayerG.appendChild(label);
+
+    const barBg = document.createElementNS(NS,'rect');
+    barBg.setAttribute('x', p.x+14); barBg.setAttribute('y', p.y-1);
+    barBg.setAttribute('width', 92); barBg.setAttribute('height', 5); barBg.setAttribute('rx',2.5);
+    barBg.setAttribute('class','bar-bg');
+    outputLayerG.appendChild(barBg);
+
+    const barFill = document.createElementNS(NS,'rect');
+    barFill.setAttribute('x', p.x+14); barFill.setAttribute('y', p.y-1);
+    barFill.setAttribute('width', 2); barFill.setAttribute('height', 5); barFill.setAttribute('rx',2.5);
+    barFill.setAttribute('class','bar-fill'+(cl.isNew?' pink':''));
+    barFill.dataset.ci = i;
+    outputLayerG.appendChild(barFill);
+  });
+}
+
+buildStatic();
+layoutOutput();
+
+// ---- animation logic ----
+function bezierPulse(x1,y1,x2,y2,color){
+  const path = document.createElementNS(NS,'line');
+  path.setAttribute('x1',x1); path.setAttribute('y1',y1);
+  path.setAttribute('x2',x2); path.setAttribute('y2',y2);
+  path.setAttribute('class','pulse-edge'+(color?(' '+color):''));
+  pulseLayerG.appendChild(path);
+  path.animate([{opacity:0},{opacity:1,offset:.15},{opacity:1,offset:.7},{opacity:0}],{duration:420,easing:'ease'});
+  setTimeout(()=>path.remove(),430);
+}
+
+function litNode(li, ni, head=false){
+  const sel = head
+    ? outputLayerG.querySelector(`circle[data-ci="${ni}"]`)
+    : nodesLayerG.querySelector(`circle[data-li="${li}"][data-ni="${ni}"]`);
+  if(!sel) return;
+  sel.classList.remove('lit'); void sel.getBBox();
+  sel.classList.add('lit');
+}
+
+function forwardPass(colorClass){
+  // A flow's full 29-dim feature vector arrives at once: ALL input neurons
+  // fire simultaneously (fully-connected layer), not one-at-a-time. The signal
+  // then travels hop-by-hop through the frozen backbone along many visible
+  // connections in parallel (not a single thin path), finally reaching the head.
+  const inputPts = nodePositions[0]; // all 29
+  const newIdxs = classes.map((c,i)=>c.isNew?i:-1).filter(i=>i>=0);
+  const oldIdxs = classes.map((c,i)=>c.isNew?-1:i).filter(i=>i>=0);
+  const outIdx = colorClass==='pink'
+    ? newIdxs[Math.floor(Math.random()*newIdxs.length)]
+    : oldIdxs[Math.floor(Math.random()*oldIdxs.length)];
+
+  // 1) the whole 29-neuron input vector fires together (single flow, single instant)
+  inputPts.forEach((p,ni)=> litNode(0, ni));
+
+  // 2) hop-by-hop through Input->H1->H2->H3->H4->H5, several parallel connections lit per hop
+  let t = 260;
+  for(let li=0; li<nodePositions.length-1; li++){
+    const from = nodePositions[li], to = nodePositions[li+1];
+    setTimeout(()=>{
+      for(let k=0;k<7;k++){
+        const bi = Math.floor(Math.random()*from.length);
+        const ai = Math.floor(Math.random()*to.length);
+        const a = from[bi], b = to[ai];
+        bezierPulse(a.x,a.y,b.x,b.y,colorClass);
+        litNode(li+1, ai);
+      }
+    }, t);
+    t += 480;
+  }
+
+  // 3) H5 (fθ output, 256-dim representation) feeds the trainable head -> one class fires
+  setTimeout(()=>{
+    const h5 = nodePositions[nodePositions.length-1];
+    const b = outputPositions[outIdx] || outputPositions[0];
+    for(let k=0;k<4;k++){
+      const a = h5[Math.floor(Math.random()*h5.length)];
+      bezierPulse(a.x,a.y,b.x,b.y,colorClass);
+    }
+    litNode(null, outIdx, true);
+    bumpBar(outIdx);
+  }, t);
+}
+
+function bumpBar(ci){
+  const bar = outputLayerG.querySelector(`rect.bar-fill[data-ci="${ci}"]`);
+  const label = outputLayerG.querySelector(`text.out-row[data-ci="${ci}"]`);
+  if(!bar) return;
+  const full = 92;
+  bar.setAttribute('width', full*0.85);
+  if(label) label.classList.add('active');
+  setTimeout(()=>{
+    bar.setAttribute('width', 2);
+    if(label) label.classList.remove('active');
+  }, 650);
+}
+
+function rehearsalPulse(){
+  // a stratified rehearsal sample (M, 10% of base data) is drawn from the buffer
+  // and replayed through the WHOLE frozen backbone, same as any other flow,
+  // landing on one of the old classes.
+  const bufferBox = document.getElementById('bufferBox');
+  bufferBox.classList.remove('active'); void bufferBox.getBBox();
+  bufferBox.classList.add('active');
+  forwardPass('green');
+}
+
+// steady stream (slower, so each flow's path is easy to follow)
+let streamTimer = setInterval(()=>{
+  forwardPass(classes.some(c=>c.isNew) && Math.random()<0.3 ? 'pink' : null);
+}, 1300);
+
+let rehearsalTimer = null;
+
+function runIncrementalEvent(){
+  banner.querySelector('.big').textContent = '⚡ New classes arrive: File Transfer + C2';
+  banner.querySelector('.small').textContent = 'Backbone (layers 1–5) stays frozen · 2 new output neurons initialized · head retrains on the rehearsal buffer (M) + new-class samples (scenario 6+2, 8 classes)';
+  banner.classList.remove('show'); void banner.offsetWidth; banner.classList.add('show');
+
+  // add both new classes marked isNew, relayout -> 8 classes total (scenario 6+2)
+  classes = classes.map(c=>({...c,isNew:false}));
+  classes.push({name:'File Transfer', color:'#ff5fb0', isNew:true});
+  classes.push({name:'C2', color:'#ff5fb0', isNew:true});
+  layoutOutput();
+
+  // rehearsal buffer activity during the "retraining" window
+  rehearsalTimer = setInterval(rehearsalPulse, 1100);
+  setTimeout(()=>{
+    clearInterval(rehearsalTimer);
+  }, 6000);
+}
+
+function resetCycle(){
+  classes = [
+    {name:'Video Stream', color:'#4ce0ff'},
+    {name:'Roblox',       color:'#8a6bff'},
+    {name:'Spotify',      color:'#3ddc84'},
+    {name:'Teams',        color:'#ffb454'},
+    {name:'Youtube',      color:'#4ce0ff'},
+    {name:'Web',          color:'#8a6bff'},
+  ];
+  layoutOutput();
+}
+
+function cycle(){
+  setTimeout(()=>{ runIncrementalEvent(); }, 11000);
+  setTimeout(()=>{ resetCycle(); cycle(); }, 30000);
+}
+cycle();
+</script>
 
 </body>
 </html>
