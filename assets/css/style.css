@@ -85,12 +85,15 @@ img { max-width: 100%; display: block; }
   gap: 32px;
 }
 .nav-brand {
-  font-family: var(--mono);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: .05em;
+  display: flex;
+  align-items: center;
   text-decoration: none;
+}
+.nav-brand img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: block;
 }
 .nav-links {
   display: flex;
