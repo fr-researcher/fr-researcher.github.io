@@ -8,7 +8,7 @@ const config = {...DEFAULT_CONFIG};
 const sim = createSimulation(config);
 let snapshot = sim.snapshot(), running = true, speed = 1, activeView = 'lab', selectedVideo = 'sta1', chartService = 'sta4';
 let lastFrame = 0, renderAt = 0, sceneTime = 0, previousClassified = false, trafficAnnounced = false;
-let log = [], modeChanges = [], samples = [], lastSample = -1, toastTimer;
+let log = [], modeChanges = [], samples = [], lastSample = -1;
 const fmt = (n,d=1) => Number(n).toLocaleString('en-US',{minimumFractionDigits:d, maximumFractionDigits:d});
 const num = n => fmt(n, n>=100?0:n>=10?1:2);
 const elapsed = t => `${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}.${Math.floor((t%1)*10)}`;
@@ -67,7 +67,6 @@ function announce(text) {
   $('#last-event').textContent = `${elapsed(snapshot.time)} — ${text}`;
   if ($('#log-dialog').open) renderLog();
 }
-function toast(text){$('#toast').textContent=text;$('#toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),3300);}
 function setView(view){
   activeView=view;
   $$('.view').forEach(el=>el.classList.toggle('active',el.id===`view-${view}`));
@@ -246,18 +245,13 @@ function renderScene(){
   ctx.imageSmoothingEnabled=f.resolution>=720;ctx.drawImage(low,0,0,cw,ch);
 }
 
-$('#export').addEventListener('click',()=>{
-  const content={title:'MaxLinear — illustrative emulation',exportedAt:new Date().toISOString(),source:{title:PAPER.title,file:'ML-activated EDCA_Draft_Final.pdf',status:'Supplied draft',statistics:PAPER.statistics},scope:PAPER.notes,sampleSemantics:{rtt:'Synthetic illustration of mean RTT; not packet RTT samples or a P99 estimate',throughput:'Illustrative rate; UDP rates use configured offered load',bufferSeconds:'Scripted buffer duration, not a segment-level reconstruction',resolution:'Illustrative playback resolution',stalled:'Illustrative playback interruption'},config:{...config},modeChanges:[...modeChanges],elapsedSeconds:snapshot.time,reference:getReference(config),events:[...log].reverse(),samples};
-  const blob=new Blob([JSON.stringify(content,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`maxlinear-${config.mode.toLowerCase()}-${config.obss}obss.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);toast('Exported illustrative samples, draft results and model assumptions.');
-});
-
 function frame(now){
   const dt=lastFrame?Math.min((now-lastFrame)/1000,.15):0;lastFrame=now;
   if(running){snapshot=sim.step(dt*speed);const video=snapshot.flows.find(f=>f.id===selectedVideo);if(snapshot.time>=2&&!video.stalled)sceneTime+=dt*speed;
     if(snapshot.time>=2&&!trafficAnnounced){trafficAnnounced=true;announce('Traffic starts in all active networks. The first AP1 observation window is open.');}
     if(snapshot.classifier.classified&&!previousClassified){previousClassified=true;announce(config.mode==='BE'?'First emulated classification. In BE, predictions are recorded but not applied.':config.mode==='QoS-ML'?'First emulated classification: voice → VO; video, video calls and gaming → VI.':'First emulated classification recorded. QoS-App already marks traffic at the source.');}
     if(snapshot.time-lastSample>=.25){lastSample=snapshot.time;samples.push({time:Number(snapshot.time.toFixed(3)),mode:config.mode,flows:Object.fromEntries(snapshot.flows.map(f=>[f.id,{rtt:f.rtt,throughput:f.throughput,ac:f.ac,bufferSeconds:f.bufferSeconds,resolution:f.resolution,stalled:f.stalled}]))});}
-    if(snapshot.complete){running=false;renderTransport();announce('60 s emulation complete. Replay, change the scenario or export the session.');}
+    if(snapshot.complete){running=false;renderTransport();announce('60 s emulation complete. Replay or change the scenario.');}
   }
   if(now-renderAt>120){render();renderAt=now;}
   renderScene();requestAnimationFrame(frame);

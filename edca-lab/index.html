@@ -6,7 +6,7 @@
   <title>MaxLinear — Access point simulation</title>
   <link rel="canonical" href="https://fr-researcher.github.io/edca-lab/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='4' fill='%232f5d83'/%3E%3Cpath d='M8 16Q20 5 32 16M12 22Q20 14 28 22M17 28Q20 25 23 28' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261007-layout">
+  <link rel="stylesheet" href="styles.css?v=20261007-navigation">
 </head>
 <body>
   <svg class="icon-defs" aria-hidden="true"><defs>
@@ -26,7 +26,6 @@
     <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3Z"/></symbol>
     <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 7h14M5 17h14"/></symbol>
     <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"/><rect x="9" y="9" width="6" height="6"/></symbol>
-    <symbol id="i-export" viewBox="0 0 24 24"><path d="M14 3h7v7m0-7-11 11M10 4H4v16h16v-6"/></symbol>
   </defs></svg>
   <div class="workspace">
     <header class="topbar">
@@ -41,7 +40,6 @@
     <main>
       <div class="page-heading">
         <div><h1>Access point simulation</h1><p>IEEE 802.11be · Three-network scenario · 60-second session</p></div>
-        <button class="button subtle" id="export"><svg><use href="#i-download"/></svg>Export session</button>
       </div>
 
       <section id="view-lab" class="view active" aria-label="Live lab">
@@ -121,10 +119,10 @@
         <div class="method-details"><article class="panel method-article"><h3>Study configuration</h3><dl class="spec-list"><div><dt>PHY</dt><dd>802.11be · 5 GHz · 160 MHz</dd></div><div><dt>Modulation</dt><dd>Fixed MCS 5 · 1 stream · 800 ns GI</dd></div><div><dt>Theoretical PHY rate</dt><dd>576.5 Mbit/s</dd></div><div><dt>Channel</dt><dd>No channel loss or hidden nodes</dd></div><div><dt>Scenarios</dt><dd>Home: 6 STA · AP2: 7 · AP3: 5</dd></div><div><dt>Duration</dt><dd>60 s · study metrics from t = 7 s</dd></div></dl></article><article class="panel method-article"><h3>EDCA parameters</h3><table class="edca-table"><thead><tr><th>AC</th><th>CWmin</th><th>CWmax</th><th>AIFSN</th><th>TXOP</th></tr></thead><tbody><tr><td class="lime-text">VO</td><td>3</td><td>7</td><td>2</td><td>2080 µs</td></tr><tr><td class="violet-text">VI</td><td>7</td><td>15</td><td>2</td><td>4096 µs</td></tr><tr><td class="amber-text">BE</td><td>15</td><td>1023</td><td>3</td><td>2528 µs</td></tr><tr><td>BK</td><td>15</td><td>1023</td><td>7</td><td>—</td></tr></tbody></table></article></div>
         <article class="scope-note"><svg><use href="#i-book"/></svg><div><h3>Scope of this emulation</h3><p>Based on the draft <cite>Enabling EDCA through machine learning at the access point in IEEE 802.11be WLANs</cite>, file “ML-activated EDCA_Draft_Final.pdf”, Sections 3–5 and Tables 5–6. The study uses ns-3.40 and an XGBoost classifier coupled through ns3-ai. This browser model illustrates the mechanisms and reported trends; it does not run ns-3 or a trained classifier. Each study run uses a fixed configuration. Switching modes during a session is an illustrative transition added for this demonstration.</p><p>Packets, queues, RTT traces, throughput, and video playback are synthetic. The live RTT curve illustrates variation around the reported mean; it is not computed from packet measurements. Reference P99 values come from the draft and are independent of the live traces. RTT covers the WLAN segment, not the full delay of a call. The visualization does not decode real video or measure your Wi-Fi. The original logo from the <a href="https://owin6g.eu/" target="_blank" rel="noopener noreferrer" class="logo-source">OWIN6G project website</a> is animated locally to illustrate video playback.</p><p>This emulation assumes correct AC assignment, consistent with the evaluated runs. The reported 99.6% accuracy applies to the classifier test set and is not used as an error probability here. In QoS-App, video TCP ACKs use AC_VI; all other uplink traffic remains in AC_BE.</p></div></article>
       </section>
+      <div class="return-navigation"><a class="button subtle" href="https://fr-researcher.github.io/"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M19 12H5m7-7-7 7 7 7"/></svg>Back to homepage</a></div>
       <footer><span><span class="footer-brand">MaxLinear</span> · IEEE 802.11be</span><button data-view="method" class="text-button">Source and assumptions</button></footer>
     </main>
   </div>
   <dialog id="log-dialog"><div class="panel-heading"><h2>Session log</h2><button class="icon-button" id="close-log" aria-label="Close log">×</button></div><div id="log-entries"></div><div class="dialog-footer">Illustrative model events · simulation time</div></dialog>
-  <div id="toast" class="toast" role="status"></div>
-  <script type="module" src="app.js?v=20261007-layout"></script>
+  <script type="module" src="app.js?v=20261007-navigation"></script>
 </body></html>
