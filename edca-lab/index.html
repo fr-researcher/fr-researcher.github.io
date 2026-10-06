@@ -6,7 +6,7 @@
   <title>MaxLinear — Access point simulation</title>
   <link rel="canonical" href="https://fr-researcher.github.io/edca-lab/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='4' fill='%232f5d83'/%3E%3Cpath d='M8 16Q20 5 32 16M12 22Q20 14 28 22M17 28Q20 25 23 28' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261007-logo">
+  <link rel="stylesheet" href="styles.css?v=20261007-layout">
 </head>
 <body>
   <svg class="icon-defs" aria-hidden="true"><defs>
@@ -101,12 +101,8 @@
 
         <div class="detail-grid">
           <section class="panel experience"><div class="panel-heading"><div><h2>Video playback</h2><span class="mini-tag">Emulated playback</span></div><select id="video-source" aria-label="Video to display"><option value="sta1">STA 01 · 2160p</option><option value="sta5">STA 05 · 1440p</option></select></div><div class="video-scene"><canvas id="video-canvas" aria-label="Animated OWIN6G logo showing emulated video motion, resolution and stalls"></canvas><div class="video-top"><span>OWIN6G · Logo motion</span><span id="video-overlay-quality">Waiting</span></div><div class="stall-overlay" id="stall-overlay"><span class="loader"></span><strong>Loading video</strong><small>The buffer is empty</small></div><div class="video-bottom"><span class="video-play-icon">▶</span><div><i id="video-buffer-bar"></i></div><span id="video-frame-status">Buffer 0.0 s</span></div></div><div class="experience-caption"><span class="small-dot violet-bg"></span><a href="https://owin6g.eu/" target="_blank" rel="noopener noreferrer" class="logo-source">OWIN6G logo</a> · Motion follows the emulated buffer.<span id="video-summary">TCP flow · MPEG-DASH</span></div></section>
-          <section class="panel latency-panel"><div class="panel-heading"><div><h2>WLAN round-trip time</h2></div><select id="chart-service" aria-label="Service shown in the latency chart"><option value="sta4">Voice</option><option value="sta3">Gaming</option><option value="sta2">Video call</option></select></div><div class="chart-labels"><span><i class="legend-line lime-bg"></i>Illustrative mean RTT</span><span><i class="legend-dash"></i>WLAN target</span><span class="mono">ms · log scale</span></div><div class="chart-wrap"><svg id="rtt-chart" viewBox="0 0 640 210" role="img" aria-label="Illustrative mean WLAN RTT in milliseconds"></svg></div><div class="chart-bottom"><span id="chart-insight">Enable QoS-ML to observe the change in priority.</span><span class="mini-tag">0–60 s</span></div></section>
-        </div>
-
-        <div class="internals-grid">
           <section class="panel"><div class="panel-heading"><div><h2>AP queues</h2><span class="mini-tag">Downlink</span></div><span class="muted small">Illustrative occupancy</span></div><div class="queues" id="queues"></div><div class="queue-footnote">AC_BK receives no traffic in this scenario. Queues and packets are visual representations.</div></section>
-          <section class="panel scheduler-panel"><div class="panel-heading"><div><h2>Transmission sequence</h2><span class="mini-tag">TXOP</span></div><span class="mono lime-text" id="txop-limit">2,528 µs</span></div><div class="txop-strip" id="txop-strip"><span data-stage="RTS/CTS">RTS / CTS</span><span data-stage="DL">DL <b>A-MPDU</b></span><span data-stage="BA">BA</span><span data-stage="TF">Trigger <b>TF</b></span><span data-stage="UL">UL <b>A-MPDU</b></span><span data-stage="BA2">BA</span><span data-stage="CF-End">CF-End</span></div><div class="scheduler-info"><div><small>Downlink</small><strong id="dl-station">AP → STA 01</strong><span>First: AC = winning AC</span></div><span class="scheduler-link">⇄</span><div><small>Triggered uplink</small><strong id="ul-station">STA 06 → AP</strong><span>Eligibility: AC ≥ AC_BE</span></div></div><p class="scheduler-note">One illustrative downlink/uplink pair, shown in slow motion. The µs label is the study TXOP limit. In QoS-ML, station queues remain in BE.</p></section>
+          <section class="panel latency-panel"><div class="panel-heading"><div><h2>WLAN round-trip time</h2></div><select id="chart-service" aria-label="Service shown in the latency chart"><option value="sta4">Voice</option><option value="sta3">Gaming</option><option value="sta2">Video call</option></select></div><div class="chart-labels"><span><i class="legend-line lime-bg"></i>Illustrative mean RTT</span><span><i class="legend-dash"></i>WLAN target</span><span class="mono">ms · log scale</span></div><div class="chart-wrap"><svg id="rtt-chart" viewBox="0 0 640 210" role="img" aria-label="Illustrative mean WLAN RTT in milliseconds"></svg></div><div class="chart-bottom"><span id="chart-insight">Enable QoS-ML to observe the change in priority.</span><span class="mini-tag">0–60 s</span></div></section>
         </div>
         <div class="event-log"><span class="log-label"><span class="status-dot"></span>Events</span><span id="last-event" role="status">Preparing the coexistence scenario.</span><button class="text-button" id="show-log">View log ↗</button></div>
       </section>
@@ -130,5 +126,5 @@
   </div>
   <dialog id="log-dialog"><div class="panel-heading"><h2>Session log</h2><button class="icon-button" id="close-log" aria-label="Close log">×</button></div><div id="log-entries"></div><div class="dialog-footer">Illustrative model events · simulation time</div></dialog>
   <div id="toast" class="toast" role="status"></div>
-  <script type="module" src="app.js"></script>
+  <script type="module" src="app.js?v=20261007-layout"></script>
 </body></html>

@@ -159,18 +159,12 @@ function render(){
   $('#video-buffer-bar').style.width=`${v.bufferSeconds/9.4*100}%`;$('#video-frame-status').textContent=`Buffer ${fmt(v.bufferSeconds)} s`;
   $('#video-summary').textContent=`Illustrative stall duration: ${fmt(v.stallSeconds)} s`;
   spark('#voice-spark',samples.map(x=>x.flows.sta4.rtt));spark('#game-spark',samples.map(x=>x.flows.sta3.rtt));spark('#bulk-spark',samples.map(x=>x.flows.sta6.throughput));
-  renderQueues();renderTxop();
+  renderQueues();
   if(activeView==='lab')renderChart();
 }
 function renderQueues(){
   const definitions={VO:{name:'Voice',cw:'3 / 7',aifs:2},VI:{name:'Video + gaming',cw:'7 / 15',aifs:2},BE:{name:'Best Effort',cw:'15 / 1023',aifs:3}};
   $('#queues').innerHTML=Object.entries(definitions).map(([ac,d])=>{const q=snapshot.queues[ac],count=q?Math.max(1,Math.min(40,Math.round(Math.log2(q+1)*4))):0;return `<div class="queue-row"><span class="queue-label" style="color:${colors[ac]}">AC_${ac}</span><div class="queue-bar" aria-label="${q} illustrative packets in AC_${ac}">${Array.from({length:count},()=>`<i style="background:${colors[ac]}"></i>`).join('')}</div><span class="queue-count">${q}</span><div class="queue-meta"><span>${d.name}</span><span>CW ${d.cw} · AIFSN ${d.aifs}</span></div></div>`;}).join('');
-}
-function renderTxop(){
-  const tx=snapshot.txop, map={'rts-cts':'RTS/CTS',downlink:'DL','block-ack':'BA',trigger:'TF',uplink:'UL','ul-block-ack':'BA2','cf-end':'CF-End'};
-  $('#txop-limit').textContent=`${fmt(tx.limitUs,0)} µs · ${tx.wonAc}`;
-  $('#dl-station').textContent=`AP → ${stationName(tx.dlSta)}`;$('#ul-station').textContent=`${stationName(tx.ulSta)} → AP`;
-  $$('#txop-strip>span').forEach(el=>el.classList.toggle('active',map[tx.stage]===el.dataset.stage));
 }
 function renderChart(){
   const compact=$('#rtt-chart').clientWidth<440, labelSize=compact?17:10;
