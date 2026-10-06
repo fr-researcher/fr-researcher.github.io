@@ -102,6 +102,7 @@ img { max-width: 100%; display: block; }
   margin-left: auto;
 }
 .nav-links a {
+  white-space: nowrap;
   color: var(--text-muted);
   font-size: .9rem;
   font-weight: 500;
@@ -687,13 +688,13 @@ footer a:hover { color: var(--accent); }
    RESPONSIVE
 ────────────────────────────────────────── */
 @media (max-width: 860px) {
+  .nav-links, .theme-toggle { display: none; }
+  .nav-burger { display: block; }
   .about-grid { grid-template-columns: 1fr; }
   .cv-grid { grid-template-columns: 1fr; }
   .cv-block-full { grid-column: 1; }
 }
 @media (max-width: 640px) {
-  .nav-links, .theme-toggle { display: none; }
-  .nav-burger { display: block; }
   .pub-card { flex-direction: column; gap: 12px; }
   .pub-type { writing-mode: horizontal-tb; width: fit-content; padding: 3px 12px; }
   .cv-item { grid-template-columns: 1fr; gap: 4px; }
