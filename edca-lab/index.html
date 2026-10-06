@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f6"><meta name="description" content="Interactive emulation of traffic classification and EDCA at an IEEE 802.11be access point, with reference results for voice, video, gaming, and bulk traffic.">
+  <title>MaxLinear — Access point simulation</title>
+  <link rel="canonical" href="https://fr-researcher.github.io/edca-lab/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='4' fill='%232f5d83'/%3E%3Cpath d='M8 16Q20 5 32 16M12 22Q20 14 28 22M17 28Q20 25 23 28' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="icon-defs" aria-hidden="true"><defs>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M3 8a15 15 0 0 1 18 0M6 12a10 10 0 0 1 12 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="20" r=".8"/></symbol>
+    <symbol id="i-lab" viewBox="0 0 24 24"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 3v17h17M8 15l4-5 4 3 5-8"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 5v16M12 5Q6 2 3 4v15q4-2 9 2 5-4 9-2V4q-4-2-9 1Z"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="m10 8 5 3-5 3ZM8 21h8M12 17v4"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="m5 3 4 1 1 5-3 2q2 4 6 6l2-3 5 1 1 4c-1 6-19-5-18-13Z"/></symbol>
+    <symbol id="i-game" viewBox="0 0 24 24"><path d="M7 7h10q3 0 4 9t-6 0H9q-8 9-6 0T7 7ZM6 12h5M8.5 9.5v5M16 11h.1M18 14h.1"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 5a3 3 0 0 1 0 6m2 3q4 0 4 7"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 8M4 4v6h6"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="m14 2-9 12h7l-2 8 9-12h-7Z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v1"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3Z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 7h14M5 17h14"/></symbol>
+    <symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"/><rect x="9" y="9" width="6" height="6"/></symbol>
+    <symbol id="i-export" viewBox="0 0 24 24"><path d="M14 3h7v7m0-7-11 11M10 4H4v16h16v-6"/></symbol>
+  </defs></svg>
+  <div class="workspace">
+    <header class="topbar">
+      <a href="#" class="wordmark header-logo maxlinear-logo" aria-label="MaxLinear"><img src="assets/maxlinear-logo.svg" alt="MaxLinear" width="531" height="231"></a>
+      <div class="top-tabs" role="tablist" aria-label="Views"><button role="tab" aria-selected="true" data-view="lab" class="active">Simulation</button><button role="tab" aria-selected="false" data-view="compare">Reference results</button><button role="tab" aria-selected="false" data-view="method">Method</button></div>
+      <div class="header-logos" aria-label="Organizations and funding">
+        <a class="header-logo valencia-logo" href="https://www.uv.es/" target="_blank" rel="noopener noreferrer" aria-label="Universitat de València website"><img src="assets/universitat-valencia-seal.png" alt="Universitat de València" width="225" height="92"></a>
+        <span class="header-logo eu-logo"><img src="assets/eu-funding-logo.png" alt="Funded by the European Union" width="466" height="104"></span>
+        <a class="header-logo owin6g-logo" href="https://owin6g.eu/" target="_blank" rel="noopener noreferrer" aria-label="OWIN6G website"><span class="owin6g-mark" role="img" aria-label="OWIN6G"></span></a>
+      </div>
+    </header>
+    <main>
+      <div class="page-heading">
+        <div><h1>Access point simulation</h1><p>IEEE 802.11be · Three-network scenario · 60-second session</p></div>
+        <button class="button subtle" id="export"><svg><use href="#i-download"/></svg>Export session</button>
+      </div>
+
+      <section id="view-lab" class="view active" aria-label="Live lab">
+        <div class="lab-grid">
+          <section class="panel network-panel">
+            <div class="panel-heading"><div><span class="status-dot" id="live-dot"></span><h2>Network topology</h2><span class="mini-tag">Three BSSs</span></div><span class="mono muted" id="clock">00:00.0 / 01:00</span></div>
+            <div class="shared-channel-bar"><strong>Shared radio channel</strong><span>5 GHz · 160 MHz</span><span id="active-network-count">3 networks · 18 stations</span></div>
+            <div class="neighbor-priority-line"><strong>Neighbor priority</strong><span id="neighbor-priority-summary">Waiting for traffic · starts at t = 2 s</span></div>
+            <div class="topology-scroll-hint">Scroll horizontally to view AP1, AP2 and AP3.</div>
+            <div class="topology-scroll" tabindex="0" aria-label="Three network diagram; scroll horizontally to view all networks">
+              <div class="three-networks" id="network">
+                <section class="bss bss-home" id="home-bss" aria-labelledby="home-bss-title">
+                  <header class="bss-heading"><h3 id="home-bss-title">AP1 · Home</h3><span>6 stations</span></header>
+                  <div class="bss-state" id="network-mode">No prioritization · BE</div>
+                  <p class="bss-timing" id="home-priority-timing">All traffic uses AC_BE</p>
+                  <div class="bss-diagram">
+                    <svg class="bss-links" viewBox="0 0 300 390" preserveAspectRatio="none" aria-hidden="true"><g class="wire-base" id="home-base-links"></g><g class="moving-wires" id="moving-wires"></g></svg>
+                    <div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>AP1</strong><small>Wi-Fi 7</small></div>
+                    <div class="bss-stations"><div class="station" data-station="sta1"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small>STA 01</small><strong>4K video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta2"><span class="station-icon blue"><svg><use href="#i-users"/></svg></span><div><small>STA 02</small><strong>Video call</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta3"><span class="station-icon blue"><svg><use href="#i-game"/></svg></span><div><small>STA 03</small><strong>Gaming</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta4"><span class="station-icon lime"><svg><use href="#i-phone"/></svg></span><div><small>STA 04</small><strong>Voice</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta5"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small>STA 05</small><strong>1440p video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta6"><span class="station-icon amber"><svg><use href="#i-download"/></svg></span><div><small>STA 06</small><strong>TCP download</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div></div>
+                  </div>
+                  <p class="bss-note" id="ap-caption">No priority marking</p>
+                </section>
+                <section class="bss" id="ap2" aria-labelledby="ap2-title"></section>
+                <section class="bss" id="ap3" aria-labelledby="ap3-title"></section>
+              </div>
+            </div>
+            <div class="topology-legend"><span><i class="ac-vo"></i>VO · Voice</span><span><i class="ac-vi"></i>VI · Video / gaming</span><span><i class="ac-be"></i>BE · Best Effort</span></div>
+            <p class="topology-note">Active networks contend on the same channel. Link animations illustrate traffic classes. Neighbor labels show the draft's traffic configuration.</p>
+            <div class="pipeline" aria-label="AP1 processing pipeline"><div><span class="step-number">01</span><span>Observe<span class="pipe-note">5 s window</span></span></div><span class="pipe-arrow">→</span><div id="classifier-stage"><span class="step-number">02</span><span>Classify<span class="pipe-note" id="classifier-note">7 features</span></span><div class="class-progress"><i id="class-progress"></i></div></div><span class="pipe-arrow">→</span><div><span class="step-number">03</span><span>Mark DSCP<span class="pipe-note" id="mark-note">Open loop</span></span></div><span class="pipe-arrow">→</span><div><span class="step-number">04</span><span>Prioritize<span class="pipe-note">EDCA queues + TF</span></span></div></div>
+            <div class="transport"><div class="transport-buttons"><button id="play" class="button play" aria-label="Pause simulation">Ⅱ <span>Pause</span></button><button id="reset" class="icon-button" aria-label="Reset simulation" title="Reset"><svg><use href="#i-reset"/></svg></button><div class="speed-control"><label for="speed">Speed</label><select id="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></div></div><div class="timeline"><i id="timeline-progress"></i><span id="timeline-marker"></span></div><span class="mono muted">60 s</span></div>
+          </section>
+
+          <aside class="panel controls">
+            <div class="panel-heading"><h2>Scenario</h2></div>
+            <div class="control-body"><label class="control-label">Home network mode</label>
+              <div class="mode-options" role="group" aria-label="Home network mode">
+                <button data-mode="BE" class="mode-option active"><span class="radio-indicator"></span><span><strong>Best Effort</strong><small>All flows use AC_BE</small></span><span class="mode-code">BE</span></button>
+                <button data-mode="QoS-ML" class="mode-option"><span class="radio-indicator"></span><span><strong>QoS-ML</strong><small>The AP observes, classifies, and prioritizes</small></span><span class="mode-code lime-text">ML</span></button>
+                <button data-mode="QoS-App" class="mode-option"><span class="radio-indicator"></span><span><strong>QoS-App</strong><small>Marking from the first packet</small></span><span class="mode-code">APP</span></button>
+              </div>
+              <label class="control-label">Neighboring networks</label><div class="segment-control" role="group" aria-label="Number of neighboring networks"><button data-obss="0">Home only</button><button data-obss="1">+1 OBSS</button><button data-obss="2" class="active">+2 OBSS</button></div>
+              <div class="toggle-row"><span>Neighbors prioritize<small>QoS-App from first packet · t = 2 s</small></span><button id="neighbor-toggle" class="toggle on" role="switch" aria-checked="true" aria-label="Neighbors prioritize"><i></i></button></div>
+              <div class="scenario-insight"><svg><use href="#i-info"/></svg><p id="scenario-insight">The home network uses BE to compete with prioritized traffic from two neighboring networks.</p></div>
+              <button id="activate" class="button primary"><span>Enable QoS-ML</span></button>
+              <span class="control-footnote">Mode changes illustrate transitions between reference scenarios.</span>
+            </div>
+          </aside>
+        </div>
+
+        <p class="emulation-note">Live values and traces are illustrative. P99 badges use the draft's scenario results. Each study run used a fixed configuration; mode changes here demonstrate transitions.</p>
+        <div class="metrics-grid">
+          <article class="metric-card"><div class="metric-top"><span><svg><use href="#i-phone"/></svg>Voice latency</span><span class="metric-status" id="voice-status">Starting</span></div><div class="metric-value"><strong id="voice-value">—</strong><span>ms <small>Mean RTT</small></span><svg class="spark" id="voice-spark" viewBox="0 0 100 32" aria-hidden="true"></svg></div><div class="metric-bottom"><span>WLAN target <b>100 ms</b></span><span id="voice-p99">P99 ref. —</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span><svg><use href="#i-video"/></svg>Video quality</span><span class="metric-status" id="video-status">Starting</span></div><div class="metric-value"><strong id="video-value">—</strong><span id="video-unit">STA 01</span><div class="quality-bars" id="quality-bars"><i></i><i></i><i></i><i></i><i></i></div></div><div class="metric-bottom"><span>Buffer <b id="video-buffer">0.0 s</b></span><span id="video-rate">0.0 Mbit/s</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span><svg><use href="#i-game"/></svg>Gaming latency</span><span class="metric-status" id="game-status">Starting</span></div><div class="metric-value"><strong id="game-value">—</strong><span>ms <small>Mean RTT</small></span><svg class="spark blue-text" id="game-spark" viewBox="0 0 100 32" aria-hidden="true"></svg></div><div class="metric-bottom"><span>WLAN target <b>20 ms</b></span><span id="game-p99">P99 ref. —</span></div></article>
+          <article class="metric-card"><div class="metric-top"><span><svg><use href="#i-download"/></svg>TCP download</span><span class="metric-status neutral">AC_BE</span></div><div class="metric-value"><strong id="bulk-value">—</strong><span>Mbit/s</span><svg class="spark amber-text" id="bulk-spark" viewBox="0 0 100 32" aria-hidden="true"></svg></div><div class="metric-bottom"><span>Illustrative throughput</span><span id="bulk-p99">P99 ref. —</span></div></article>
+        </div>
+
+        <div class="detail-grid">
+          <section class="panel experience"><div class="panel-heading"><div><h2>Video playback</h2><span class="mini-tag">Emulated playback</span></div><select id="video-source" aria-label="Video to display"><option value="sta1">STA 01 · 2160p</option><option value="sta5">STA 05 · 1440p</option></select></div><div class="video-scene"><canvas id="video-canvas" aria-label="Animated OWIN6G logo showing emulated video motion, resolution and stalls"></canvas><div class="video-top"><span>OWIN6G · Logo motion</span><span id="video-overlay-quality">Waiting</span></div><div class="stall-overlay" id="stall-overlay"><span class="loader"></span><strong>Loading video</strong><small>The buffer is empty</small></div><div class="video-bottom"><span class="video-play-icon">▶</span><div><i id="video-buffer-bar"></i></div><span id="video-frame-status">Buffer 0.0 s</span></div></div><div class="experience-caption"><span class="small-dot violet-bg"></span><a href="https://owin6g.eu/" target="_blank" rel="noopener noreferrer" class="logo-source">OWIN6G logo</a> · Motion follows the emulated buffer.<span id="video-summary">TCP flow · MPEG-DASH</span></div></section>
+          <section class="panel latency-panel"><div class="panel-heading"><div><h2>WLAN round-trip time</h2></div><select id="chart-service" aria-label="Service shown in the latency chart"><option value="sta4">Voice</option><option value="sta3">Gaming</option><option value="sta2">Video call</option></select></div><div class="chart-labels"><span><i class="legend-line lime-bg"></i>Illustrative mean RTT</span><span><i class="legend-dash"></i>WLAN target</span><span class="mono">ms · log scale</span></div><div class="chart-wrap"><svg id="rtt-chart" viewBox="0 0 640 210" role="img" aria-label="Illustrative mean WLAN RTT in milliseconds"></svg></div><div class="chart-bottom"><span id="chart-insight">Enable QoS-ML to observe the change in priority.</span><span class="mini-tag">0–60 s</span></div></section>
+        </div>
+
+        <div class="internals-grid">
+          <section class="panel"><div class="panel-heading"><div><h2>AP queues</h2><span class="mini-tag">Downlink</span></div><span class="muted small">Illustrative occupancy</span></div><div class="queues" id="queues"></div><div class="queue-footnote">AC_BK receives no traffic in this scenario. Queues and packets are visual representations.</div></section>
+          <section class="panel scheduler-panel"><div class="panel-heading"><div><h2>Transmission sequence</h2><span class="mini-tag">TXOP</span></div><span class="mono lime-text" id="txop-limit">2,528 µs</span></div><div class="txop-strip" id="txop-strip"><span data-stage="RTS/CTS">RTS / CTS</span><span data-stage="DL">DL <b>A-MPDU</b></span><span data-stage="BA">BA</span><span data-stage="TF">Trigger <b>TF</b></span><span data-stage="UL">UL <b>A-MPDU</b></span><span data-stage="BA2">BA</span><span data-stage="CF-End">CF-End</span></div><div class="scheduler-info"><div><small>Downlink</small><strong id="dl-station">AP → STA 01</strong><span>First: AC = winning AC</span></div><span class="scheduler-link">⇄</span><div><small>Triggered uplink</small><strong id="ul-station">STA 06 → AP</strong><span>Eligibility: AC ≥ AC_BE</span></div></div><p class="scheduler-note">One illustrative downlink/uplink pair, shown in slow motion. The µs label is the study TXOP limit. In QoS-ML, station queues remain in BE.</p></section>
+        </div>
+        <div class="event-log"><span class="log-label"><span class="status-dot"></span>Events</span><span id="last-event" role="status">Preparing the coexistence scenario.</span><button class="text-button" id="show-log">View log ↗</button></div>
+      </section>
+
+      <section id="view-compare" class="view" aria-label="Mode comparison">
+        <div class="section-intro"><h2>Reference results</h2><p>Results reported in the draft for the selected scenario, using five random seeds. RTT and throughput are evaluated from t = 7 s. Change the scenario in the Simulation tab.</p></div>
+        <div class="comparison-scenario" id="comparison-scenario"></div><div class="compare-cards" id="compare-cards"></div>
+        <div class="panel comparison-table-wrap"><table class="comparison-table"><thead><tr><th>Service / metric</th><th>Best Effort</th><th>QoS-ML</th><th>QoS-App</th><th>Evaluation criterion</th></tr></thead><tbody id="comparison-rows"></tbody></table></div>
+        <div class="comparison-note"><svg><use href="#i-info"/></svg><div><p>Mean RTT is the mean of the five per-seed means. P99 uses RTT samples pooled across those seeds. TCP throughput is the mean across five seeds, from t = 7 s to the last received packet. The values are rounded labels from Figures 9–11 and 13–15 of the supplied draft.</p><p>The video rate criteria are 16.88 Mbit/s for 2160p and 8.44 Mbit/s for 1440p (Table 6). The IP throughput includes protocol headers. Meeting a rate criterion alone does not establish uninterrupted playback: the highest resolution, no stalls and a stable buffer are also required (Figures 12 and 16).</p><p>These results are independent of the animated session. QoS-App is a source-marking reference, not a strict upper bound on QoS-ML performance.</p></div></div>
+        <div class="takeaway-grid"><article><h3>Latency</h3><p>With BE neighbors, QoS-ML meets all three WLAN RTT targets. With QoS-App neighbors, voice meets its target, gaming exceeds 20 ms, and video calls exceed 100 ms with two neighbors.</p></article><article><h3>Video playback</h3><p>With BE neighbors, both videos retain their maximum resolution. With QoS-App neighbors, QoS-ML restores maximum resolution after the initial observation period. QoS-App retains maximum resolution from the start.</p></article><article><h3>Throughput trade-off</h3><p>Prioritization redistributes access to the channel. With two BE neighbors, mean TCP download throughput is 49.0 Mbit/s under BE and 41.3 Mbit/s under QoS-ML.</p></article></div>
+      </section>
+
+      <section id="view-method" class="view" aria-label="Methodology and scope">
+        <div class="section-intro"><h2>Method and assumptions</h2><p>The study's classification, marking, and medium-access mechanisms, illustrated in a browser.</p></div>
+        <div class="method-grid"><article class="panel method-article"><span class="method-number">01</span><h3>Flow observation</h3><p>In the study, the AP groups TCP and UDP packets carrying data into bidirectional flows. Every second, it analyzes the previous 5 seconds using five packet-size features and two timing features.</p><div class="method-callout">Traffic starts: t = 2 s<br>First complete window: t = 7 s</div><p>If a flow has no traffic in the final second of the window, the AP skips reclassification and retains its previous class. This is the <b>abstain</b> rule. Classification also runs in BE, but its predictions are not applied.</p></article><article class="panel method-article"><span class="method-number">02</span><h3>Classification and DSCP marking</h3><p>XGBoost predicts the application. The AP then rewrites DSCP in subsequent downlink packets before placing them in MAC queues.</p><div class="mapping-row"><span>Voice (VoIP)</span><b class="lime-text">AC_VO</b></div><div class="mapping-row"><span>Video · Video call · Gaming</span><b class="violet-text">AC_VI</b></div><div class="mapping-row"><span>TCP download</span><b class="amber-text">AC_BE</b></div><p>QoS-App marks downlink traffic at its source from the first packet. QoS-ML waits for the first complete observation window.</p></article><article class="panel method-article"><span class="method-number">03</span><h3>TXOP scheduling</h3><p>After winning channel access through EDCA and protecting it with RTS/CTS, the AP selects the station with the longest queue in the winning AC.</p><p>The Trigger Frame requests uplink transmission from the previous STA in the pairing sequence, provided it has pending traffic. The STA responds after SIFS without contending again.</p><div class="method-callout">First DL: AC = winning AC<br>Later DL: AC ≥ winning AC<br>Uplink: AC ≥ AC_BE</div><p>Round-robin scheduling continues while time remains in the TXOP. All three modes use this scheduler.</p></article></div>
+        <div class="method-details"><article class="panel method-article"><h3>Study configuration</h3><dl class="spec-list"><div><dt>PHY</dt><dd>802.11be · 5 GHz · 160 MHz</dd></div><div><dt>Modulation</dt><dd>Fixed MCS 5 · 1 stream · 800 ns GI</dd></div><div><dt>Theoretical PHY rate</dt><dd>576.5 Mbit/s</dd></div><div><dt>Channel</dt><dd>No channel loss or hidden nodes</dd></div><div><dt>Scenarios</dt><dd>Home: 6 STA · AP2: 7 · AP3: 5</dd></div><div><dt>Duration</dt><dd>60 s · study metrics from t = 7 s</dd></div></dl></article><article class="panel method-article"><h3>EDCA parameters</h3><table class="edca-table"><thead><tr><th>AC</th><th>CWmin</th><th>CWmax</th><th>AIFSN</th><th>TXOP</th></tr></thead><tbody><tr><td class="lime-text">VO</td><td>3</td><td>7</td><td>2</td><td>2080 µs</td></tr><tr><td class="violet-text">VI</td><td>7</td><td>15</td><td>2</td><td>4096 µs</td></tr><tr><td class="amber-text">BE</td><td>15</td><td>1023</td><td>3</td><td>2528 µs</td></tr><tr><td>BK</td><td>15</td><td>1023</td><td>7</td><td>—</td></tr></tbody></table></article></div>
+        <article class="scope-note"><svg><use href="#i-book"/></svg><div><h3>Scope of this emulation</h3><p>Based on the draft <cite>Enabling EDCA through machine learning at the access point in IEEE 802.11be WLANs</cite>, file “ML-activated EDCA_Draft_Final.pdf”, Sections 3–5 and Tables 5–6. The study uses ns-3.40 and an XGBoost classifier coupled through ns3-ai. This browser model illustrates the mechanisms and reported trends; it does not run ns-3 or a trained classifier. Each study run uses a fixed configuration. Switching modes during a session is an illustrative transition added for this demonstration.</p><p>Packets, queues, RTT traces, throughput, and video playback are synthetic. The live RTT curve illustrates variation around the reported mean; it is not computed from packet measurements. Reference P99 values come from the draft and are independent of the live traces. RTT covers the WLAN segment, not the full delay of a call. The visualization does not decode real video or measure your Wi-Fi. The original logo from the <a href="https://owin6g.eu/" target="_blank" rel="noopener noreferrer" class="logo-source">OWIN6G project website</a> is animated locally to illustrate video playback.</p><p>This emulation assumes correct AC assignment, consistent with the evaluated runs. The reported 99.6% accuracy applies to the classifier test set and is not used as an error probability here. In QoS-App, video TCP ACKs use AC_VI; all other uplink traffic remains in AC_BE.</p></div></article>
+      </section>
+      <footer><span><span class="footer-brand">MaxLinear</span> · IEEE 802.11be</span><button data-view="method" class="text-button">Source and assumptions</button></footer>
+    </main>
+  </div>
+  <dialog id="log-dialog"><div class="panel-heading"><h2>Session log</h2><button class="icon-button" id="close-log" aria-label="Close log">×</button></div><div id="log-entries"></div><div class="dialog-footer">Illustrative model events · simulation time</div></dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="app.js"></script>
+</body></html>

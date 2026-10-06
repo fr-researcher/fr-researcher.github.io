@@ -2,6 +2,12 @@
 
 Static HTML/CSS/JS site, ready to deploy on **GitHub Pages**.
 
+## Access point simulation
+
+The reviewed EDCA browser emulation is available at <https://fr-researcher.github.io/edca-lab/>. The desktop and mobile navigation links open it in a new tab.
+
+`edca-lab/` is a self-contained static site. It includes the simulation, draft reference results, method notes and logos. It uses relative asset paths and requires no build step or backend. Live values are illustrative; it does not run ns-3 or a trained classifier. The source PDF is not included in this repository.
+
 ## Deploy en GitHub Pages (paso a paso)
 
 ### 1. Crear el repositorio en GitHub
