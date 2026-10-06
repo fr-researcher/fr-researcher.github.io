@@ -8,6 +8,8 @@ The reviewed EDCA browser emulation is available at <https://fr-researcher.githu
 
 `edca-lab/` is a self-contained static site. It includes the simulation, draft reference results, method notes and logos. It uses relative asset paths and requires no build step or backend. Live values are illustrative; it does not run ns-3 or a trained classifier. The source PDF is not included in this repository.
 
+The MaxLinear header uses the original [SVG from the official website](https://www.maxlinear.com/Content/Images/maxlinear_logo_r.svg), downloaded without modifying its artwork.
+
 ## Deploy en GitHub Pages (paso a paso)
 
 ### 1. Crear el repositorio en GitHub
