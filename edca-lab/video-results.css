@@ -16,15 +16,8 @@
 .video-study-observation{margin:18px 0 0;padding:13px 15px;border-left:2px solid #a2b6c5;background:#f6f8fa}
 .video-study-observation h3{font-size:12px;margin-bottom:4px}
 .video-study-observation p{font-size:12px;line-height:1.75;margin:0;color:#526471}
-.video-original-figure{padding-top:18px;border-top:1px solid var(--line)}
-.video-original-link{color:var(--accent);text-decoration:underline;text-underline-offset:3px;font-size:12px;white-space:nowrap}
-.video-figure-guide{font-size:12px;line-height:1.75;color:var(--muted);margin:0 0 12px}
-.video-original-scroll{width:100%;overflow-x:auto;scrollbar-width:thin;border:1px solid #e3e8ec;background:#fff}
-.video-original-image{display:block;width:100%;min-width:850px;height:auto;max-width:none;object-fit:contain}
-.video-figure-error{font-size:12px;line-height:1.6;margin:10px 0 0;color:var(--red)}
 .video-study-notes{border-top:1px solid var(--line);padding-top:15px;margin-top:18px}
 .video-study-notes p+p{margin-top:9px}
-.video-study-results [hidden]{display:none!important}
-.video-original-scroll:focus-visible,.video-throughput-scroll:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.video-throughput-scroll:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 @media(max-width:950px){.video-indicator-definitions{gap:18px}.video-study-body{padding:16px}.video-study-context{font-size:12px}}
-@media(max-width:700px){.video-study-body{padding:14px 12px 16px}.video-indicator-definitions{grid-template-columns:1fr;gap:16px;padding-bottom:18px}.video-study-context{margin-bottom:16px}.video-throughput-svg{min-width:560px}.video-study-observation{padding:12px}.video-subheading{align-items:flex-start;gap:6px}.video-original-figure{padding-top:16px}.video-study-results figcaption{font-size:11px}.video-paper-badge{font-size:10px}}
+@media(max-width:700px){.video-study-body{padding:14px 12px 16px}.video-indicator-definitions{grid-template-columns:1fr;gap:16px;padding-bottom:18px}.video-study-context{margin-bottom:16px}.video-throughput-svg{min-width:560px}.video-study-observation{padding:12px}.video-subheading{align-items:flex-start;gap:6px}.video-study-results figcaption{font-size:11px}.video-paper-badge{font-size:10px}}

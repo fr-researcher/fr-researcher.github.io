@@ -1,6 +1,6 @@
 import {createSimulation, getReference, FLOWS, PAPER, DEFAULT_CONFIG} from './model.js?v=20261007-paper-check';
 import {NEIGHBOR_NETWORKS, getNeighborNetworkStates} from './topology.js?v=20261007-paper-check';
-import {initVideoResults} from './video-results.js?v=20261007-paper-check';
+import {initVideoResults} from './video-results.js?v=20261007-reference-clean';
 import {initVideoLive} from './video-live.js?v=20261007-paper-check';
 
 const $ = (s) => document.querySelector(s);

@@ -63,8 +63,8 @@ export function initVideoResults(root) {
     <div class="video-study-body">
       <p class="video-study-context" data-video-context aria-live="polite"></p>
       <div class="video-indicator-definitions">
-        <div><h3>Resolution and interruptions</h3><p>The top row reports median resolution across five seeds and identifies playback interruptions. The maximum representations are 2160p for STA 01 and 1440p for STA 05.</p></div>
-        <div><h3>Downlink throughput</h3><p>The time series use a centered 5-second average. Table 6 gives maximum-resolution encoding rates of <strong>16.88 Mbit/s</strong> and <strong>8.44 Mbit/s</strong>; IP throughput also includes protocol headers.</p></div>
+        <div><h3>Resolution and interruptions</h3><p>The paper reports median playback resolution across five seeds and identifies interruptions. The maximum representations are 2160p for STA 01 and 1440p for STA 05.</p></div>
+        <div><h3>Downlink throughput</h3><p>The paper's time series use a centered 5-second average. Table 6 gives maximum-resolution encoding rates of <strong>16.88 Mbit/s</strong> and <strong>8.44 Mbit/s</strong>; IP throughput also includes protocol headers.</p></div>
         <div><h3>Buffered content</h3><p>Buffer size is the sum of the buffered segments’ encoded content, in Mbit. A full buffer is approximately <strong>159 Mbit</strong> for STA 01 or <strong>79 Mbit</strong> for STA 05: about 9.4 s at maximum resolution.</p></div>
       </div>
       <figure class="video-throughput-figure">
@@ -73,26 +73,13 @@ export function initVideoResults(root) {
         <figcaption data-throughput-caption></figcaption>
       </figure>
       <div class="video-study-observation"><h3>Observation for the selected mode</h3><p data-video-observation></p></div>
-      <figure class="video-original-figure">
-        <div class="video-subheading"><h3 data-figure-heading></h3><a class="video-original-link" data-figure-link target="_blank" rel="noopener noreferrer">Open original figure <span aria-hidden="true">↗</span></a></div>
-        <p class="video-figure-guide" data-figure-guide></p>
-        <div class="video-original-scroll" tabindex="0" role="region" aria-label="Original paper video plots; scroll horizontally to inspect every axis and legend"><img class="video-original-image" data-figure-image loading="lazy" decoding="async" width="1376" height="1051" alt=""></div>
-        <p class="video-figure-error" data-figure-error hidden>The figure could not be loaded. Use “Open original figure” to open the image directly.</p>
-        <figcaption data-figure-caption></figcaption>
-      </figure>
       <div class="video-study-notes">
-        <p>In the original time series, throughput and buffer curves show the mean across five seeds with the minimum-to-maximum range; resolution is the median. Figure 12 additionally enlarges the buffer interval from t = 2 to 16 s. The figures retain their original axes, labels and legends.</p>
-        <p>Buffer Mbit cannot generally be calculated as current buffer seconds multiplied by the current representation’s encoding rate, because buffered segments may use different representations. The animated player’s buffer and resolution are illustrative; these figures are the paper’s reported results.</p>
-        <p data-figure-rate-note hidden>Figure 16 retains the original 20 and 10 Mbit/s labels in its titles. The dashed line above uses the distinct Table 6 encoding criteria of 16.88 and 8.44 Mbit/s; the original image has not been relabeled.</p>
+        <p>Buffer Mbit cannot generally be calculated as current buffer seconds multiplied by the current representation’s encoding rate, because buffered segments may use different representations. The animated player’s buffer and resolution are illustrative. The comparison above uses the paper’s reported throughput values.</p>
       </div>
     </div>`;
 
   const find = selector => root.querySelector(selector);
-  const image = find('[data-figure-image]');
-  image.addEventListener('error', () => { find('[data-figure-error]').hidden = false; });
-  image.addEventListener('load', () => { find('[data-figure-error]').hidden = true; });
   let previousKey = '';
-  let previousFigure = 0;
 
   return function updateVideoResults({config, selectedVideo}) {
     const key = JSON.stringify([config.mode, config.obss, config.neighbors, selectedVideo]);
@@ -100,33 +87,14 @@ export function initVideoResults(root) {
     const flow = FLOWS.find(item => item.id === selectedVideo && item.type === 'video') || FLOWS.find(item => item.type === 'video');
     const rows = MODES.map(mode => ({mode, value: getReference({...config, mode}).find(item => item.id === flow.id).throughput}));
     const crowded = config.obss > 0 && config.neighbors === 'QoS';
-    const figureNumber = crowded ? 16 : 12;
     const rateFigure = crowded ? 15 : 11;
     const scenario = scenarioLabel(config);
     const station = `STA ${String(flow.sta).padStart(2, '0')}`;
-    const scenarioColumns = config.obss ? `+${config.obss} ${config.obss === 1 ? 'OBSS' : 'OBSSs'}` : 'Home';
 
     find('[data-video-context]').textContent = `${station} · ${flow.maxResolution}p maximum · ${scenario} · ${config.mode}`;
     find('[data-throughput-chart]').innerHTML = throughputChart(rows, flow, config.mode, prefix);
     find('[data-throughput-caption]').textContent = `Rounded values printed in Figure ${rateFigure}: mean across five seeds, from t = 7 s to the last received packet. The dashed line marks the Table 6 encoding rate for ${flow.maxResolution}p (${number.format(flow.encodingRate)} Mbit/s). These are study results, not measurements of the animated session.`;
     find('[data-video-observation]').textContent = studyObservation(config, flow);
-    find('[data-figure-heading]').textContent = `Figure ${figureNumber} · Video time series`;
-    find('[data-figure-guide]').textContent = `The original figure compares both video stations across the scenarios shown. Read the ${scenarioColumns} columns for ${station}, and use the legend to identify ${config.mode}. Scroll horizontally on smaller screens to inspect every plot.`;
-    find('[data-figure-caption]').textContent = figureNumber === 12
-      ? 'Supplied draft, Figure 12 (p. 14) · Best Effort neighbors. From top to bottom: resolution and interruptions; downlink IP throughput; buffered content in Mbit; buffer detail for t = 2–16 s.'
-      : 'Supplied draft, Figure 16 (p. 17) · Prioritized neighbors. From top to bottom: resolution and interruptions; downlink IP throughput; buffered content in Mbit.';
-    find('[data-figure-rate-note]').hidden = figureNumber !== 16;
-
-    if (previousFigure !== figureNumber) {
-      const source = `assets/paper-video/figure-${figureNumber}.png`;
-      find('[data-figure-error]').hidden = true;
-      find('[data-figure-link]').href = source;
-      image.width = figureNumber === 12 ? 1376 : 1349;
-      image.height = figureNumber === 12 ? 1051 : 1044;
-      image.alt = `Original Figure ${figureNumber} from the study, showing both STA 01 and STA 05 across the study scenarios. ${figureNumber === 12 ? 'Four rows: resolution and interruptions, downlink throughput, buffer Mbit, and buffer detail from 2 to 16 seconds.' : 'Three rows: resolution and interruptions, downlink throughput, and buffer Mbit.'} All original axes and legends are retained.`;
-      image.src = source;
-      previousFigure = figureNumber;
-    }
     previousKey = key;
   };
 }
