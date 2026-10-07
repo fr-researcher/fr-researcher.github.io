@@ -23,25 +23,25 @@ const updateVideoLive = initVideoLive($('#video-study-results'),{
   onVideoChange:id=>{selectedVideo=id;$('#video-source').value=id;render();}
 });
 
-// Shared coordinates keep each station aligned with its airborne packet path.
-const starPositions={
-  5:[[150,38],[247,137],[211,310],[89,310],[53,137]],
-  6:[[150,38],[247,109],[247,251],[150,322],[53,251],[53,109]],
-  7:[[150,38],[247,105],[247,232],[208,322],[92,322],[53,232],[53,105]]
-};
+// Equal-radius positions keep each STA and its packet path on a circular orbit.
+const starPositions=Object.fromEntries([5,6,7].map(count=>[count,Array.from({length:count},(_,index)=>{
+  const angle=-Math.PI/2+index*2*Math.PI/count;
+  const radius=count===7?152:140;
+  return [180+radius*Math.cos(angle),180+radius*Math.sin(angle)];
+})]));
 const radioCoverage='<div class="radio-coverage" aria-hidden="true"><i></i><i></i></div>';
 function networkLinks(stations, attribute){
   return stations.map((station,index)=>{
     const [x,y]=starPositions[stations.length][index];
-    const downlink=station.downlink!==false?`<path class="air-packets downlink" pathLength="100" d="M150 180L${x} ${y}"/>`:'';
-    const uplink=station.uplink!==false?`<path class="air-packets uplink" pathLength="100" d="M${x} ${y}L150 180"/>`:'';
+    const downlink=station.downlink!==false?`<path class="air-packets downlink" pathLength="100" d="M180 180L${x} ${y}"/>`:'';
+    const uplink=station.uplink!==false?`<path class="air-packets uplink" pathLength="100" d="M${x} ${y}L180 180"/>`:'';
     return `<g ${attribute}="${station.id}" style="--packet-delay:${-index*.37}s">${downlink}${uplink}</g>`;
   }).join('');
 }
 function positionStations(container,count){
   container.querySelectorAll('.station').forEach((node,index)=>{
     const [x,y]=starPositions[count][index];
-    node.style.setProperty('--station-x',`${x/3}%`);
+    node.style.setProperty('--station-x',`${x/3.6}%`);
     node.style.setProperty('--station-y',`${y/3.6}%`);
   });
 }
@@ -50,12 +50,14 @@ function initializeTopology(){
   positionStations($('#home-bss'),FLOWS.length);
   NEIGHBOR_NETWORKS.forEach(network=>{
     const ap=network.id.toUpperCase();
-    $(`#${network.id}`).innerHTML=`<header class="bss-heading"><h3 id="${network.id}-title">${ap} · ${network.label}</h3><span>${network.stations.length} stations</span></header><div class="bss-state"></div><p class="bss-timing"></p><div class="bss-diagram">${radioCoverage}<svg class="bss-links" viewBox="0 0 300 360" preserveAspectRatio="none" aria-hidden="true"><g class="moving-wires">${networkLinks(network.stations,'data-neighbor-link')}</g></svg><div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>${ap}</strong><small>Wi-Fi 7</small></div><div class="bss-stations">${network.stations.map(station=>`<div class="station neighbor-station" data-neighbor-station="${station.id}" title="${station.label}: ${station.detail}" tabindex="0"><span class="station-icon"><svg><use href="#i-${station.icon}"/></svg></span><div><small>STA ${String(station.number).padStart(2,'0')}</small><strong>${station.label}</strong><span class="station-stat">${station.detail}</span></div><span class="ac-tag">BE</span></div>`).join('')}</div></div><p class="bss-note">UL: BE; video TCP ACKs inherit VI with QoS-App.</p>`;
+    $(`#${network.id}`).innerHTML=`<header class="bss-heading"><h3 id="${network.id}-title">${ap} · ${network.label}</h3><span>${network.stations.length} stations</span></header><div class="bss-state"></div><p class="bss-timing"></p><div class="bss-diagram">${radioCoverage}<svg class="bss-links" viewBox="0 0 360 360" aria-hidden="true"><g class="moving-wires">${networkLinks(network.stations,'data-neighbor-link')}</g></svg><div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>${ap}</strong><small>Wi-Fi 7</small></div><div class="bss-stations">${network.stations.map(station=>`<div class="station neighbor-station" data-neighbor-station="${station.id}" title="${station.label}: ${station.detail}" tabindex="0"><span class="station-icon"><svg><use href="#i-${station.icon}"/></svg></span><div><small><b class="station-ap">${ap}</b> · STA ${String(station.number).padStart(2,'0')}</small><strong>${station.label}</strong><span class="station-stat">${station.detail}</span></div><span class="ac-tag">BE</span></div>`).join('')}</div></div><p class="bss-note">UL: BE; video TCP ACKs inherit VI with QoS-App.</p>`;
     positionStations($(`#${network.id}`),network.stations.length);
   });
 }
 function renderTopology(){
   const networks=getNeighborNetworkStates(config,snapshot.time),active=networks.filter(network=>network.enabled);
+  $('#network').dataset.networkCount=String(1+active.length);
+  $('#topology-count').textContent=`${1+active.length} ${active.length?'BSSs':'BSS'} · same channel`;
   const traffic=snapshot.time>=PAPER.trafficStart;
   const marked=traffic&&(config.mode==='QoS-App'||snapshot.classifier.applied);
   $('#home-bss').dataset.priority=marked?'on':traffic?'off':'waiting';

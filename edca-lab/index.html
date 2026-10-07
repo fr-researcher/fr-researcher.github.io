@@ -7,6 +7,7 @@
   <link rel="canonical" href="https://fr-researcher.github.io/edca-lab/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='4' fill='%232f5d83'/%3E%3Cpath d='M8 16Q20 5 32 16M12 22Q20 14 28 22M17 28Q20 25 23 28' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css?v=20261007-wireless">
+  <link rel="stylesheet" href="topology-layout.css?v=20261007-shared-channel">
   <link rel="stylesheet" href="video-results.css?v=20261007-reference-clean">
   <link rel="stylesheet" href="video-live.css?v=20261007-live-video">
 </head>
@@ -47,12 +48,13 @@
       <section id="view-lab" class="view active" aria-label="Live lab">
         <div class="lab-grid">
           <section class="panel network-panel">
-            <div class="panel-heading"><div><span class="status-dot" id="live-dot"></span><h2>Network topology</h2><span class="mini-tag">Three BSSs</span></div><span class="mono muted" id="clock">00:00.0 / 01:00</span></div>
+            <div class="panel-heading"><div><span class="status-dot" id="live-dot"></span><h2>Network topology</h2><span class="mini-tag" id="topology-count">Three BSSs</span></div><span class="mono muted" id="clock">00:00.0 / 01:00</span></div>
             <div class="shared-channel-bar"><strong>Shared radio channel</strong><span>5 GHz · 160 MHz</span><span id="active-network-count">3 networks · 18 stations</span></div>
             <div class="neighbor-priority-line"><strong>Neighbor priority</strong><span id="neighbor-priority-summary">Waiting for traffic · starts at t = 2 s</span></div>
-            <div class="topology-scroll-hint">Scroll horizontally to view AP2, AP1 and AP3.</div>
-            <div class="topology-scroll" tabindex="0" aria-label="Three network diagram; scroll horizontally to view all networks">
-              <div class="three-networks" id="network">
+            <div class="topology-scroll-hint">Scroll horizontally to inspect all stations within the shared channel.</div>
+            <div class="topology-scroll" tabindex="0" aria-label="Active networks within one shared radio channel; scroll horizontally if needed">
+              <div class="three-networks" id="network" data-network-count="3">
+                <div class="shared-channel-boundary" aria-hidden="true"><div class="shared-channel-field"><i class="channel-bands channel-ap1"></i><i class="channel-bands channel-ap2"></i><i class="channel-bands channel-ap3"></i></div><span>One shared channel</span></div>
                 <section class="bss" id="ap2" aria-labelledby="ap2-title"></section>
                 <section class="bss bss-home" id="home-bss" aria-labelledby="home-bss-title">
                   <header class="bss-heading"><h3 id="home-bss-title">AP1 · Under study</h3><span>6 stations</span></header>
@@ -60,17 +62,17 @@
                   <p class="bss-timing" id="home-priority-timing">All traffic uses AC_BE</p>
                   <div class="bss-diagram">
                     <div class="radio-coverage" aria-hidden="true"><i></i><i></i></div>
-                    <svg class="bss-links" viewBox="0 0 300 360" preserveAspectRatio="none" aria-hidden="true"><g class="moving-wires" id="moving-wires"></g></svg>
+                    <svg class="bss-links" viewBox="0 0 360 360" aria-hidden="true"><g class="moving-wires" id="moving-wires"></g></svg>
                     <div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>AP1</strong><small>Under study</small></div>
-                    <div class="bss-stations"><div class="station" data-station="sta1"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small>STA 01</small><strong>4K video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta2"><span class="station-icon blue"><svg><use href="#i-users"/></svg></span><div><small>STA 02</small><strong>Video call</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta3"><span class="station-icon blue"><svg><use href="#i-game"/></svg></span><div><small>STA 03</small><strong>Gaming</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta4"><span class="station-icon lime"><svg><use href="#i-phone"/></svg></span><div><small>STA 04</small><strong>Voice</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta5"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small>STA 05</small><strong>1440p video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta6"><span class="station-icon amber"><svg><use href="#i-download"/></svg></span><div><small>STA 06</small><strong>TCP download</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div></div>
+                    <div class="bss-stations"><div class="station" data-station="sta1"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small><b class="station-ap">AP1</b> · STA 01</small><strong>4K video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta2"><span class="station-icon blue"><svg><use href="#i-users"/></svg></span><div><small><b class="station-ap">AP1</b> · STA 02</small><strong>Video call</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta3"><span class="station-icon blue"><svg><use href="#i-game"/></svg></span><div><small><b class="station-ap">AP1</b> · STA 03</small><strong>Gaming</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta4"><span class="station-icon lime"><svg><use href="#i-phone"/></svg></span><div><small><b class="station-ap">AP1</b> · STA 04</small><strong>Voice</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta5"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small><b class="station-ap">AP1</b> · STA 05</small><strong>1440p video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta6"><span class="station-icon amber"><svg><use href="#i-download"/></svg></span><div><small><b class="station-ap">AP1</b> · STA 06</small><strong>TCP download</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div></div>
                   </div>
                   <p class="bss-note" id="ap-caption">No priority marking</p>
                 </section>
                 <section class="bss" id="ap3" aria-labelledby="ap3-title"></section>
               </div>
             </div>
-            <div class="topology-legend"><span><i class="ac-vo"></i>VO · Voice</span><span><i class="ac-vi"></i>VI · Video / gaming</span><span><i class="ac-be"></i>BE · Best Effort</span><span class="coverage-key"><i></i>Overlapping wireless coverage</span></div>
-            <p class="topology-note">Moving dots represent wireless packets between each AP and its stations. Overlapping areas indicate shared-channel contention, not a propagation model.</p>
+            <div class="topology-legend"><span><i class="ac-vo"></i>VO · Voice</span><span><i class="ac-vi"></i>VI · Video / gaming</span><span><i class="ac-be"></i>BE · Best Effort</span><span class="coverage-key"><i></i>Shared channel area</span></div>
+            <p class="topology-note">AP labels and header colors identify each station’s associated network. Radial bands originate at each AP and overlap within one shared 5 GHz, 160 MHz channel. Moving dots and VO, VI, BE markings show traffic and its access category. The bands illustrate shared contention, not measured signal strength or radio range.</p>
             <div class="pipeline" aria-label="AP1 processing pipeline"><div><span class="step-number">01</span><span>Observe<span class="pipe-note">5 s window</span></span></div><span class="pipe-arrow">→</span><div id="classifier-stage"><span class="step-number">02</span><span>Classify<span class="pipe-note" id="classifier-note">7 features</span></span><div class="class-progress"><i id="class-progress"></i></div></div><span class="pipe-arrow">→</span><div><span class="step-number">03</span><span>Mark DSCP<span class="pipe-note" id="mark-note">Open loop</span></span></div><span class="pipe-arrow">→</span><div><span class="step-number">04</span><span>Prioritize<span class="pipe-note">EDCA queues + TF</span></span></div></div>
             <div class="transport"><div class="transport-buttons"><button id="play" class="button play" aria-label="Pause simulation">Ⅱ <span>Pause</span></button><button id="reset" class="icon-button" aria-label="Reset simulation" title="Reset"><svg><use href="#i-reset"/></svg></button><div class="speed-control"><label for="speed">Speed</label><select id="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></div></div><div class="timeline"><i id="timeline-progress"></i><span id="timeline-marker"></span></div><span class="mono muted">60 s</span></div>
           </section>
@@ -129,5 +131,5 @@
     </main>
   </div>
   <dialog id="log-dialog"><div class="panel-heading"><h2>Session log</h2><button class="icon-button" id="close-log" aria-label="Close log">×</button></div><div id="log-entries"></div><div class="dialog-footer">Illustrative model events · simulation time</div></dialog>
-  <script type="module" src="app.js?v=20261007-reference-clean"></script>
+  <script type="module" src="app.js?v=20261007-shared-channel"></script>
 </body></html>
