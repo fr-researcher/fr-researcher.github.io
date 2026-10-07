@@ -48,9 +48,10 @@
             <div class="panel-heading"><div><span class="status-dot" id="live-dot"></span><h2>Network topology</h2><span class="mini-tag">Three BSSs</span></div><span class="mono muted" id="clock">00:00.0 / 01:00</span></div>
             <div class="shared-channel-bar"><strong>Shared radio channel</strong><span>5 GHz · 160 MHz</span><span id="active-network-count">3 networks · 18 stations</span></div>
             <div class="neighbor-priority-line"><strong>Neighbor priority</strong><span id="neighbor-priority-summary">Waiting for traffic · starts at t = 2 s</span></div>
-            <div class="topology-scroll-hint">Scroll horizontally to view AP1, AP2 and AP3.</div>
+            <div class="topology-scroll-hint">Scroll horizontally to view AP2, AP1 and AP3.</div>
             <div class="topology-scroll" tabindex="0" aria-label="Three network diagram; scroll horizontally to view all networks">
               <div class="three-networks" id="network">
+                <section class="bss" id="ap2" aria-labelledby="ap2-title"></section>
                 <section class="bss bss-home" id="home-bss" aria-labelledby="home-bss-title">
                   <header class="bss-heading"><h3 id="home-bss-title">AP1 · Under study</h3><span>6 stations</span></header>
                   <div class="bss-state" id="network-mode">No prioritization · BE</div>
@@ -63,7 +64,6 @@
                   </div>
                   <p class="bss-note" id="ap-caption">No priority marking</p>
                 </section>
-                <section class="bss" id="ap2" aria-labelledby="ap2-title"></section>
                 <section class="bss" id="ap3" aria-labelledby="ap3-title"></section>
               </div>
             </div>
