@@ -10,6 +10,10 @@ The reviewed EDCA browser emulation is available at <https://fr-researcher.githu
 
 The MaxLinear header uses the original [SVG from the official website](https://www.maxlinear.com/Content/Images/maxlinear_logo_r.svg), downloaded without modifying its artwork.
 
+The live video model preserves initial playback before the BE interruptions in Figure 16. After refill, prioritized video rates converge toward the steady IP rates described on page 8 (18.53 and 9.27 Mbit/s). Reported scenario means include transients and remain separate reference values. The live rate is not the paper's centered five-second average across five seeds. Buffer and stalls are scripted trends, not a simulation of DASH segment downloads and consumption. Neighbor packet animations follow the traffic directions in Figure 4.
+
+Run the video fidelity regression checks with `node edca-lab/tests/model-fidelity.mjs`.
+
 ## Deploy en GitHub Pages (paso a paso)
 
 ### 1. Crear el repositorio en GitHub

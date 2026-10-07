@@ -1,28 +1,29 @@
-import {DEFAULT_CONFIG, PAPER} from './model.js';
+import {DEFAULT_CONFIG, PAPER} from './model.js?v=20261007-paper-check';
 
 // Station mix from the draft's three-WLAN scenario. These are topology and
 // marking states, not additional measured or simulated neighbor performance.
+// Data directions follow Figure 4; video uplink includes TCP acknowledgments.
 export const NEIGHBOR_NETWORKS = Object.freeze([
   {
     id:'ap2', ordinal:1, label:'Neighbor 1',
     stations:[
-      {id:'sta7', number:7, label:'4K video', detail:'2160p stream', icon:'video', priorityAc:'VI'},
-      {id:'sta8', number:8, label:'4K cameras', detail:'UDP · 40 Mbit/s DL', icon:'camera', priorityAc:'BE'},
-      {id:'sta9', number:9, label:'Gaming', detail:'Interactive game', icon:'game', priorityAc:'VI'},
-      {id:'sta10', number:10, label:'Video call', detail:'8 / 4 Mbit/s DL / UL', icon:'users', priorityAc:'VI'},
-      {id:'sta11', number:11, label:'Voice', detail:'VoIP', icon:'phone', priorityAc:'VO'},
-      {id:'sta12', number:12, label:'Web', detail:'Bursty UDP · 5 Mbit/s DL', icon:'globe', priorityAc:'BE'},
-      {id:'sta13', number:13, label:'IoT', detail:'Bursty UDP · 3 Mbit/s UL', icon:'chip', priorityAc:'BE'}
+      {id:'sta7', number:7, label:'4K video', detail:'2160p stream', icon:'video', priorityAc:'VI', downlink:true, uplink:true},
+      {id:'sta8', number:8, label:'4K cameras', detail:'UDP · 40 Mbit/s DL', icon:'camera', priorityAc:'BE', downlink:true, uplink:false},
+      {id:'sta9', number:9, label:'Gaming', detail:'Interactive game', icon:'game', priorityAc:'VI', downlink:true, uplink:true},
+      {id:'sta10', number:10, label:'Video call', detail:'8 / 4 Mbit/s DL / UL', icon:'users', priorityAc:'VI', downlink:true, uplink:true},
+      {id:'sta11', number:11, label:'Voice', detail:'VoIP', icon:'phone', priorityAc:'VO', downlink:true, uplink:true},
+      {id:'sta12', number:12, label:'Web', detail:'Bursty UDP · 5 Mbit/s DL', icon:'globe', priorityAc:'BE', downlink:true, uplink:false},
+      {id:'sta13', number:13, label:'IoT', detail:'Bursty UDP · 3 Mbit/s UL', icon:'chip', priorityAc:'BE', downlink:false, uplink:true}
     ]
   },
   {
     id:'ap3', ordinal:2, label:'Neighbor 2',
     stations:[
-      {id:'sta14', number:14, label:'1440p video', detail:'1440p stream', icon:'video', priorityAc:'VI'},
-      {id:'sta15', number:15, label:'4K cameras', detail:'UDP · 30 Mbit/s DL', icon:'camera', priorityAc:'BE'},
-      {id:'sta16', number:16, label:'Video call', detail:'8 / 4 Mbit/s DL / UL', icon:'users', priorityAc:'VI'},
-      {id:'sta17', number:17, label:'Voice', detail:'VoIP', icon:'phone', priorityAc:'VO'},
-      {id:'sta18', number:18, label:'IoT', detail:'Bursty UDP · 2 Mbit/s UL', icon:'chip', priorityAc:'BE'}
+      {id:'sta14', number:14, label:'1440p video', detail:'1440p stream', icon:'video', priorityAc:'VI', downlink:true, uplink:true},
+      {id:'sta15', number:15, label:'4K cameras', detail:'UDP · 30 Mbit/s DL', icon:'camera', priorityAc:'BE', downlink:true, uplink:false},
+      {id:'sta16', number:16, label:'Video call', detail:'8 / 4 Mbit/s DL / UL', icon:'users', priorityAc:'VI', downlink:true, uplink:true},
+      {id:'sta17', number:17, label:'Voice', detail:'VoIP', icon:'phone', priorityAc:'VO', downlink:true, uplink:true},
+      {id:'sta18', number:18, label:'IoT', detail:'Bursty UDP · 2 Mbit/s UL', icon:'chip', priorityAc:'BE', downlink:false, uplink:true}
     ]
   }
 ].map(network=>Object.freeze({

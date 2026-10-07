@@ -1,4 +1,4 @@
-import {FLOWS, PAPER} from './model.js';
+import {FLOWS, PAPER} from './model.js?v=20261007-paper-check';
 
 const MODES = ['BE', 'QoS-ML', 'QoS-App'];
 const SVG = {width:360, height:250, left:50, right:14, top:42, bottom:214};
@@ -154,7 +154,7 @@ export function initVideoLive(root, {onToggle, onReset, onVideoChange}={}) {
       <figure class="vl-chart"><div class="vl-chart-heading"><h3>Buffered playback</h3><span><strong data-video-current="buffer" data-value="">—</strong><small> s</small></span></div><div data-vl-chart="buffer"></div><figcaption>Dashed line: approximately 9.4 s at full buffer.</figcaption></figure>
     </div>
     <div class="vl-legend"><span><i class="vl-stall-key"></i>Playback stalled</span><span><i class="vl-mode-key"></i>Mode change</span><span>Time follows the simulation clock.</span></div>
-    <footer class="vl-footer"><p>Illustrative emulation based on Figures 12 and 16. These plots follow the animated player; buffer is shown in seconds, while the paper reports buffered content in Mbit.</p><button type="button" data-view="compare" class="text-button">Paper reference ↗</button></footer>`;
+    <footer class="vl-footer"><p>Illustrative trends based on Figures 12 and 16, synchronized with the player. Buffer and stalls are scripted; DASH segments are not simulated. Buffer is shown in seconds; the paper reports buffered content in Mbit.</p><button type="button" data-view="compare" class="text-button">Paper reference ↗</button></footer>`;
 
   const find = selector => root.querySelector(selector);
   const toggle = find('[data-vl-toggle]');
@@ -201,7 +201,7 @@ export function initVideoLive(root, {onToggle, onReset, onVideoChange}={}) {
     for (const kind of ['resolution', 'throughput', 'buffer']) {
       find(`[data-vl-chart="${kind}"]`).innerHTML = renderVideoLiveChart(kind, state, prefix);
     }
-    find('[data-vl-throughput-caption]').textContent = `Dashed line: Table 6 encoding rate, ${state.definition.encodingRate.toFixed(2)} Mbit/s. IP throughput includes headers.`;
+    find('[data-vl-throughput-caption]').textContent = `Current emulated IP rate, including headers. Dashed line: Table 6 encoding rate, ${state.definition.encodingRate.toFixed(2)} Mbit/s. The paper uses a centered 5-second average across five seeds.`;
     previousKey = key;
   };
 }

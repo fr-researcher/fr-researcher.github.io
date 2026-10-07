@@ -1,4 +1,4 @@
-import {getReference, FLOWS} from './model.js';
+import {getReference, FLOWS} from './model.js?v=20261007-paper-check';
 
 const MODES = ['BE', 'QoS-ML', 'QoS-App'];
 const number = new Intl.NumberFormat('en-US', {maximumFractionDigits: 2});

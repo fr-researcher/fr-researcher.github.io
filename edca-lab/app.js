@@ -1,7 +1,7 @@
-import {createSimulation, getReference, FLOWS, PAPER, DEFAULT_CONFIG} from './model.js';
-import {NEIGHBOR_NETWORKS, getNeighborNetworkStates} from './topology.js';
-import {initVideoResults} from './video-results.js?v=20261007-live-video';
-import {initVideoLive} from './video-live.js?v=20261007-live-video';
+import {createSimulation, getReference, FLOWS, PAPER, DEFAULT_CONFIG} from './model.js?v=20261007-paper-check';
+import {NEIGHBOR_NETWORKS, getNeighborNetworkStates} from './topology.js?v=20261007-paper-check';
+import {initVideoResults} from './video-results.js?v=20261007-paper-check';
+import {initVideoLive} from './video-live.js?v=20261007-paper-check';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -33,7 +33,9 @@ const radioCoverage='<div class="radio-coverage" aria-hidden="true"><i></i><i></
 function networkLinks(stations, attribute){
   return stations.map((station,index)=>{
     const [x,y]=starPositions[stations.length][index];
-    return `<g ${attribute}="${station.id}" style="--packet-delay:${-index*.37}s"><path class="air-packets downlink" pathLength="100" d="M150 180L${x} ${y}"/><path class="air-packets uplink" pathLength="100" d="M${x} ${y}L150 180"/></g>`;
+    const downlink=station.downlink!==false?`<path class="air-packets downlink" pathLength="100" d="M150 180L${x} ${y}"/>`:'';
+    const uplink=station.uplink!==false?`<path class="air-packets uplink" pathLength="100" d="M${x} ${y}L150 180"/>`:'';
+    return `<g ${attribute}="${station.id}" style="--packet-delay:${-index*.37}s">${downlink}${uplink}</g>`;
   }).join('');
 }
 function positionStations(container,count){
@@ -77,7 +79,8 @@ function renderTopology(){
       node.style.borderLeftColor=colors[station.ac];
       const packets=container.querySelector(`[data-neighbor-link="${station.id}"]`);
       packets.style.stroke=colors[station.ac];
-      packets.querySelector('.uplink').style.stroke=colors[network.prioritizing&&station.icon==='video'?'VI':'BE'];
+      const uplink=packets.querySelector('.uplink');
+      if(uplink)uplink.style.stroke=colors[network.prioritizing&&station.icon==='video'?'VI':'BE'];
     });
   });
 }

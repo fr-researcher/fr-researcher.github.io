@@ -15,6 +15,7 @@ export const FLOWS = Object.freeze([
 export const PAPER = Object.freeze({
   title:'Enabling EDCA through machine learning at the access point in IEEE 802.11be WLANs',
   window:5,step:1,trafficStart:2,metricsStart:7,duration:60,segmentSeconds:2,fullBufferSeconds:9.4,
+  videoSteadyIpMbps:Object.freeze({2160:18.53,1440:9.27}),
   phy:{standard:'IEEE 802.11be',bandGHz:5,channelMHz:160,mcs:5,nss:1,giNs:800,rateMbps:576.5},
   edca:{VO:{cwMin:3,cwMax:7,aifsn:2,txopUs:2080},VI:{cwMin:7,cwMax:15,aifsn:2,txopUs:4096},BE:{cwMin:15,cwMax:1023,aifsn:3,txopUs:2528},BK:{cwMin:15,cwMax:1023,aifsn:7,txopUs:null}},
   targets:{voice:100,conference:100,gaming:20},
@@ -31,8 +32,9 @@ export const PAPER = Object.freeze({
     'In QoS-App, video TCP ACKs use VI; all other uplink traffic remains BE. QoS-App is not a strict upper bound.',
     'The 99.6% accuracy comes from the classifier test set. The paper\'s simulation runs did not assign any incorrect ACs.',
     'The reference P99 uses pooled RTT samples across five random seeds. Mean RTT is the mean of the five per-seed means.',
-    'Lower video representation rates, queue sizes, channel occupancy and the animated frame sequence are illustrative.',
-    'Video buffer seconds and stalls are scripted illustrations. Approximate buffer Mbit values do not reconstruct the draft\'s per-segment buffer.',
+    'Lower video representations, queue sizes, channel occupancy and the animated frame sequence are illustrative.',
+    'Video buffer seconds and stalls are scripted illustrations, not a DASH segment simulation. Buffered Mbit is not computed without per-segment history.',
+    'Live video throughput uses the steady IP rates described on page 8 with illustrative refill transients; it is not the paper\'s centered 5-second average across five seeds.',
     'UDP throughput is not reported in the draft; its live display is an estimate based on configured offered load.'
   ]
 });
@@ -102,8 +104,6 @@ export function getReference(input={}){
   });
 }
 
-/** These lower video rates are teaching assumptions, not published measurements. */
-const REPRESENTATIONS=[{p:360,rate:.75},{p:480,rate:1.5},{p:720,rate:2.5},{p:1080,rate:4.22},{p:1440,rate:8.44},{p:2160,rate:16.88}];
 const rank={BE:0,VI:1,VO:2};
 const stageNames=['contention','rts-cts','downlink','block-ack','trigger','uplink','ul-block-ack','cf-end'];
 
@@ -116,7 +116,7 @@ export function createSimulation(initial={}){
     txopCount=0;triggerCount=0;emulatedPackets=0;lastCycle=-1;activeTxop=null;
     flows=FLOWS.map(f=>({...f,active:true,ac:config.mode==='QoS-App'?f.ac:'BE',dscp:null,classLabel:null,
       observationStart:null,lastActive:null,classifiedAt:null,classificationCount:0,abstaining:false,
-      rtt:0,p99:0,throughput:0,queuePackets:0,bufferSeconds:0,bufferMbit:0,resolution:f.maxResolution||null,
+      rtt:0,p99:0,throughput:0,queuePackets:0,bufferSeconds:0,resolution:f.maxResolution||null,
       stalled:false,started:false,playbackTime:0,stallSeconds:0,deliveredMbit:0,uplinkAc:config.mode==='QoS-App'&&f.type==='video'?'VI':'BE'}));
     applyMarking();
   }
@@ -146,7 +146,7 @@ export function createSimulation(initial={}){
     events=events.slice(0,12);
   }
 
-  function videoTarget(f,effective,ref){
+  function videoTarget(f,effective){
     const crowded=config.obss>0&&config.neighbors==='QoS';
     const prioritized=effective!=='BE';
     if(!crowded){
@@ -167,15 +167,15 @@ export function createSimulation(initial={}){
       const stalled=f.id==='sta1'&&elapsed<1&&f.bufferSeconds<.6;
       return {resolution,buffer:stalled?0:9.4,stalled,responseSeconds:1.2};
     }
-    if(config.mode==='QoS-ML'){
-      // Separate the short ML observation period from a full BE run. In
-      // Figure 16, STA1 initially plays 2160p and STA5 starts at 480p.
+    if(config.mode==='QoS-ML'||time<5){
+      // Figure 16: both BE and ML initially play STA1 at 2160p and STA5
+      // at 480p before interruptions near 5 s. ML then recovers sooner.
       const stalled=time>=5&&(f.id==='sta1'||config.obss===2);
       const buffer=stalled?0:f.id==='sta5'&&config.obss===1?.5+.2*(time-2):Math.max(.3,3-(time-2));
       return {resolution:f.id==='sta1'?f.maxResolution:480,buffer,stalled,responseSeconds:.3};
     }
     if(config.obss===1){
-      const resolution=f.id==='sta1'?(time<12?480:Math.sin(time*.23)>-.35?1080:720):480;
+      const resolution=f.id==='sta1'?(time<12?480:time>=34&&time<36?1440:Math.sin(time*.23)>-.35?1080:720):480;
       const stalled=f.id==='sta1'&&time>5&&time<12&&Math.sin(time*2.7)>-.2;
       return {resolution,buffer:stalled?0:Math.min(9.4,Math.max(.4,(time-5)*.3)),stalled};
     }
@@ -202,9 +202,14 @@ export function createSimulation(initial={}){
       f.p99=lerp(f.p99,isLive?ref.p99:0,alpha);
       f.p99Rtt=f.p99;f.meanRtt=f.rtt;
       // UDP delivery is illustrative; only TCP throughput is reported in the paper.
-      let targetRate=isLive?(ref.throughput??f.offeredRate)*(1+.04*Math.sin(time*2.1+i)):0;
+      // Figure means include startup/refill. They are not steady-state rates.
+      // Page 8 gives stable IP delivery of 18.53 / 9.27 Mbit/s; Figure 16
+      // shows ML converging to App after recovery. Keep printed means in refs.
+      const degradedVideo=f.type==='video'&&effective==='BE'&&config.obss>0&&config.neighbors==='QoS';
+      const steadyRate=f.type==='video'&&!degradedVideo?PAPER.videoSteadyIpMbps[f.maxResolution]:(ref.throughput??f.offeredRate);
+      let targetRate=isLive?steadyRate*(1+.04*Math.sin(time*2.1+i)):0;
       if(f.type==='video'&&isLive){
-        const v=videoTarget(f,effective,ref);
+        const v=videoTarget(f,effective);
         f.resolution=v.resolution;
         const recovery=effective!=='BE'&&f.bufferSeconds<8.5;
         // Reference values are IP-layer throughput, including protocol headers.
@@ -216,10 +221,8 @@ export function createSimulation(initial={}){
         if(f.stalled)f.bufferSeconds=0;
         f.started=true;
         if(f.stalled)f.stallSeconds+=dt;else f.playbackTime+=dt;
-        f.bufferMbit=f.bufferSeconds*(REPRESENTATIONS.find(r=>r.p===f.resolution)?.rate||f.encodingRate);
       }else if(f.type==='video'&&!isLive){
         if(time>=2){f.bufferSeconds=Math.max(0,f.bufferSeconds-dt);f.stalled=f.bufferSeconds===0;}
-        f.bufferMbit=f.bufferSeconds*(REPRESENTATIONS.find(r=>r.p===f.resolution)?.rate||f.encodingRate);
       }
       f.throughput=lerp(f.throughput,targetRate,alpha);
       f.deliveredMbit+=f.throughput*dt;
