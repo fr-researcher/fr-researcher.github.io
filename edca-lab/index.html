@@ -6,7 +6,7 @@
   <title>MaxLinear — Access point simulation</title>
   <link rel="canonical" href="https://fr-researcher.github.io/edca-lab/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='4' fill='%232f5d83'/%3E%3Cpath d='M8 16Q20 5 32 16M12 22Q20 14 28 22M17 28Q20 25 23 28' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261007-navigation">
+  <link rel="stylesheet" href="styles.css?v=20261007-wireless">
 </head>
 <body>
   <svg class="icon-defs" aria-hidden="true"><defs>
@@ -52,12 +52,13 @@
             <div class="topology-scroll" tabindex="0" aria-label="Three network diagram; scroll horizontally to view all networks">
               <div class="three-networks" id="network">
                 <section class="bss bss-home" id="home-bss" aria-labelledby="home-bss-title">
-                  <header class="bss-heading"><h3 id="home-bss-title">AP1 · Home</h3><span>6 stations</span></header>
+                  <header class="bss-heading"><h3 id="home-bss-title">AP1 · Under study</h3><span>6 stations</span></header>
                   <div class="bss-state" id="network-mode">No prioritization · BE</div>
                   <p class="bss-timing" id="home-priority-timing">All traffic uses AC_BE</p>
                   <div class="bss-diagram">
-                    <svg class="bss-links" viewBox="0 0 300 390" preserveAspectRatio="none" aria-hidden="true"><g class="wire-base" id="home-base-links"></g><g class="moving-wires" id="moving-wires"></g></svg>
-                    <div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>AP1</strong><small>Wi-Fi 7</small></div>
+                    <div class="radio-coverage" aria-hidden="true"><i></i><i></i></div>
+                    <svg class="bss-links" viewBox="0 0 300 360" preserveAspectRatio="none" aria-hidden="true"><g class="moving-wires" id="moving-wires"></g></svg>
+                    <div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>AP1</strong><small>Under study</small></div>
                     <div class="bss-stations"><div class="station" data-station="sta1"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small>STA 01</small><strong>4K video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta2"><span class="station-icon blue"><svg><use href="#i-users"/></svg></span><div><small>STA 02</small><strong>Video call</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta3"><span class="station-icon blue"><svg><use href="#i-game"/></svg></span><div><small>STA 03</small><strong>Gaming</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta4"><span class="station-icon lime"><svg><use href="#i-phone"/></svg></span><div><small>STA 04</small><strong>Voice</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta5"><span class="station-icon violet"><svg><use href="#i-video"/></svg></span><div><small>STA 05</small><strong>1440p video</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div><div class="station" data-station="sta6"><span class="station-icon amber"><svg><use href="#i-download"/></svg></span><div><small>STA 06</small><strong>TCP download</strong><span class="station-stat">Waiting for traffic</span></div><span class="ac-tag">BE</span></div></div>
                   </div>
                   <p class="bss-note" id="ap-caption">No priority marking</p>
@@ -66,8 +67,8 @@
                 <section class="bss" id="ap3" aria-labelledby="ap3-title"></section>
               </div>
             </div>
-            <div class="topology-legend"><span><i class="ac-vo"></i>VO · Voice</span><span><i class="ac-vi"></i>VI · Video / gaming</span><span><i class="ac-be"></i>BE · Best Effort</span></div>
-            <p class="topology-note">Active networks contend on the same channel. Link animations illustrate traffic classes. Neighbor labels show the draft's traffic configuration.</p>
+            <div class="topology-legend"><span><i class="ac-vo"></i>VO · Voice</span><span><i class="ac-vi"></i>VI · Video / gaming</span><span><i class="ac-be"></i>BE · Best Effort</span><span class="coverage-key"><i></i>Overlapping wireless coverage</span></div>
+            <p class="topology-note">Moving dots represent wireless packets between each AP and its stations. Overlapping areas indicate shared-channel contention, not a propagation model.</p>
             <div class="pipeline" aria-label="AP1 processing pipeline"><div><span class="step-number">01</span><span>Observe<span class="pipe-note">5 s window</span></span></div><span class="pipe-arrow">→</span><div id="classifier-stage"><span class="step-number">02</span><span>Classify<span class="pipe-note" id="classifier-note">7 features</span></span><div class="class-progress"><i id="class-progress"></i></div></div><span class="pipe-arrow">→</span><div><span class="step-number">03</span><span>Mark DSCP<span class="pipe-note" id="mark-note">Open loop</span></span></div><span class="pipe-arrow">→</span><div><span class="step-number">04</span><span>Prioritize<span class="pipe-note">EDCA queues + TF</span></span></div></div>
             <div class="transport"><div class="transport-buttons"><button id="play" class="button play" aria-label="Pause simulation">Ⅱ <span>Pause</span></button><button id="reset" class="icon-button" aria-label="Reset simulation" title="Reset"><svg><use href="#i-reset"/></svg></button><div class="speed-control"><label for="speed">Speed</label><select id="speed"><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></div></div><div class="timeline"><i id="timeline-progress"></i><span id="timeline-marker"></span></div><span class="mono muted">60 s</span></div>
           </section>
@@ -124,5 +125,5 @@
     </main>
   </div>
   <dialog id="log-dialog"><div class="panel-heading"><h2>Session log</h2><button class="icon-button" id="close-log" aria-label="Close log">×</button></div><div id="log-entries"></div><div class="dialog-footer">Illustrative model events · simulation time</div></dialog>
-  <script type="module" src="app.js?v=20261007-navigation"></script>
+  <script type="module" src="app.js?v=20261007-wireless"></script>
 </body></html>

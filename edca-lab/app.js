@@ -15,22 +15,33 @@ const elapsed = t => `${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.
 const stationName = id => `STA ${String(Number(id.replace('sta',''))).padStart(2,'0')}`;
 const refs = () => Object.fromEntries(getReference(config).map(f=>[f.id,f]));
 
+// Shared coordinates keep each station aligned with its airborne packet path.
+const starPositions={
+  5:[[150,38],[247,137],[211,310],[89,310],[53,137]],
+  6:[[150,38],[247,109],[247,251],[150,322],[53,251],[53,109]],
+  7:[[150,38],[247,105],[247,232],[208,322],[92,322],[53,232],[53,105]]
+};
+const radioCoverage='<div class="radio-coverage" aria-hidden="true"><i></i><i></i></div>';
 function networkLinks(stations, attribute){
   return stations.map((station,index)=>{
-    const y=122+Math.floor(index/2)*78, end=index%2?225:75;
-    return `<path ${attribute}="${station.id}" d="M150 64V${y-14}Q150 ${y} ${end} ${y}"/>`;
+    const [x,y]=starPositions[stations.length][index];
+    return `<g ${attribute}="${station.id}" style="--packet-delay:${-index*.37}s"><path class="air-packets downlink" pathLength="100" d="M150 180L${x} ${y}"/><path class="air-packets uplink" pathLength="100" d="M${x} ${y}L150 180"/></g>`;
   }).join('');
 }
+function positionStations(container,count){
+  container.querySelectorAll('.station').forEach((node,index)=>{
+    const [x,y]=starPositions[count][index];
+    node.style.setProperty('--station-x',`${x/3}%`);
+    node.style.setProperty('--station-y',`${y/3.6}%`);
+  });
+}
 function initializeTopology(){
-  const homeStations=FLOWS.map(flow=>({id:flow.id}));
-  const homeHeight=78+Math.ceil(homeStations.length/2)*78;
-  $('.bss-home .bss-diagram').style.setProperty('--diagram-height',`${homeHeight}px`);
-  $('.bss-home .bss-links').setAttribute('viewBox',`0 0 300 ${homeHeight}`);
-  $('#home-base-links').innerHTML=networkLinks(homeStations,'data-base-flow');
-  $('#moving-wires').innerHTML=networkLinks(homeStations,'data-flow');
+  $('#moving-wires').innerHTML=networkLinks(FLOWS,'data-flow');
+  positionStations($('#home-bss'),FLOWS.length);
   NEIGHBOR_NETWORKS.forEach(network=>{
-    const ap=network.id.toUpperCase(), height=78+Math.ceil(network.stations.length/2)*78;
-    $(`#${network.id}`).innerHTML=`<header class="bss-heading"><h3 id="${network.id}-title">${ap} · ${network.label}</h3><span>${network.stations.length} stations</span></header><div class="bss-state"></div><p class="bss-timing"></p><div class="bss-diagram" style="--diagram-height:${height}px"><svg class="bss-links" viewBox="0 0 300 ${height}" preserveAspectRatio="none" aria-hidden="true"><g class="wire-base">${networkLinks(network.stations,'data-base-station')}</g><g class="moving-wires">${networkLinks(network.stations,'data-neighbor-link')}</g></svg><div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>${ap}</strong><small>Wi-Fi 7</small></div><div class="bss-stations">${network.stations.map(station=>`<div class="station neighbor-station" data-neighbor-station="${station.id}"><span class="station-icon"><svg><use href="#i-${station.icon}"/></svg></span><div><small>STA ${String(station.number).padStart(2,'0')}</small><strong>${station.label}</strong><span class="station-stat">${station.detail}</span></div><span class="ac-tag">BE</span></div>`).join('')}</div></div><p class="bss-note">UL: BE; video TCP ACKs inherit VI with QoS-App.</p>`;
+    const ap=network.id.toUpperCase();
+    $(`#${network.id}`).innerHTML=`<header class="bss-heading"><h3 id="${network.id}-title">${ap} · ${network.label}</h3><span>${network.stations.length} stations</span></header><div class="bss-state"></div><p class="bss-timing"></p><div class="bss-diagram">${radioCoverage}<svg class="bss-links" viewBox="0 0 300 360" preserveAspectRatio="none" aria-hidden="true"><g class="moving-wires">${networkLinks(network.stations,'data-neighbor-link')}</g></svg><div class="ap-node"><svg><use href="#i-wifi"/></svg><strong>${ap}</strong><small>Wi-Fi 7</small></div><div class="bss-stations">${network.stations.map(station=>`<div class="station neighbor-station" data-neighbor-station="${station.id}" title="${station.label}: ${station.detail}" tabindex="0"><span class="station-icon"><svg><use href="#i-${station.icon}"/></svg></span><div><small>STA ${String(station.number).padStart(2,'0')}</small><strong>${station.label}</strong><span class="station-stat">${station.detail}</span></div><span class="ac-tag">BE</span></div>`).join('')}</div></div><p class="bss-note">UL: BE; video TCP ACKs inherit VI with QoS-App.</p>`;
+    positionStations($(`#${network.id}`),network.stations.length);
   });
 }
 function renderTopology(){
@@ -56,7 +67,9 @@ function renderTopology(){
       node.querySelector('.ac-tag').textContent=station.ac;
       node.querySelector('.ac-tag').style.color=colors[station.ac];
       node.style.borderLeftColor=colors[station.ac];
-      container.querySelector(`[data-neighbor-link="${station.id}"]`).style.stroke=colors[station.ac];
+      const packets=container.querySelector(`[data-neighbor-link="${station.id}"]`);
+      packets.style.stroke=colors[station.ac];
+      packets.querySelector('.uplink').style.stroke=colors[network.prioritizing&&station.icon==='video'?'VI':'BE'];
     });
   });
 }
@@ -112,7 +125,7 @@ function renderTransport(){
   $('#play').setAttribute('aria-label',running?'Pause simulation':snapshot.complete?'Replay simulation':'Resume simulation');
 }
 $('#play').addEventListener('click',()=>{if(snapshot.complete){restart();return;}running=!running;renderTransport();announce(running?'Simulation resumed.':'Simulation paused.');});
-$('#speed').addEventListener('change',e=>{speed=Number(e.target.value);announce(`Playback speed: ${speed}×. Units still represent simulation time.`);});
+$('#speed').addEventListener('change',e=>{speed=Number(e.target.value);$('#network').style.setProperty('--packet-duration',`${2.8/speed}s`);announce(`Playback speed: ${speed}×. Units still represent simulation time.`);});
 $('#video-source').addEventListener('change',e=>{selectedVideo=e.target.value;render();});
 $('#chart-service').addEventListener('change',e=>{chartService=e.target.value;renderChart();});
 $('#show-log').addEventListener('click',()=>{renderLog();$('#log-dialog').showModal();});
@@ -142,7 +155,7 @@ function render(){
   $('#ap-caption').textContent=config.mode==='BE'?'No priority marking':config.mode==='QoS-App'?'Priority at the source':s.classifier.applied?'ML classification applied':'Observing flows…';
   renderTopology();
   $$('[data-station]').forEach(el=>{const flow=f[el.dataset.station];el.querySelector('.ac-tag').textContent=flow.ac;el.querySelector('.ac-tag').style.color=colors[flow.ac];el.style.borderColor='#cbd3d9';el.style.borderLeftColor=colors[flow.ac];el.querySelector('.station-stat').textContent=!active?'Awaiting traffic':flow.type==='video'?`${flow.stalled?'Stall':`${flow.resolution}p`} · ${fmt(flow.bufferSeconds)} s`:flow.type==='bulk'?`${fmt(flow.throughput)} Mbit/s`:`RTT ${num(flow.rtt)} ms`;});
-  $$('#moving-wires [data-flow]').forEach(path=>path.style.stroke=colors[f[path.dataset.flow].ac]);
+  $$('#moving-wires [data-flow]').forEach(group=>{const flow=f[group.dataset.flow];group.style.stroke=colors[flow.ac];group.querySelector('.uplink').style.stroke=colors[config.mode==='QoS-App'&&flow.type==='video'?'VI':'BE'];});
   $('#voice-value').textContent=active?num(f.sta4.rtt):'—';$('#game-value').textContent=active?num(f.sta3.rtt):'—';$('#bulk-value').textContent=active?fmt(f.sta6.throughput):'—';
   status('#voice-status',reference.sta4.meetsTarget,active);status('#game-status',reference.sta3.meetsTarget,active);
   $('#voice-p99').textContent=`P99 ref. ${num(reference.sta4.p99)} ms`;$('#game-p99').textContent=`P99 ref. ${num(reference.sta3.p99)} ms`;$('#bulk-p99').textContent=`P99 ref. ${num(reference.sta6.p99)} ms`;
