@@ -1,6 +1,7 @@
 import {createSimulation, getReference, FLOWS, PAPER, DEFAULT_CONFIG} from './model.js';
 import {NEIGHBOR_NETWORKS, getNeighborNetworkStates} from './topology.js';
-import {initVideoResults} from './video-results.js?v=20261007-video';
+import {initVideoResults} from './video-results.js?v=20261007-live-video';
+import {initVideoLive} from './video-live.js?v=20261007-live-video';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
@@ -15,7 +16,12 @@ const num = n => fmt(n, n>=100?0:n>=10?1:2);
 const elapsed = t => `${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}.${Math.floor((t%1)*10)}`;
 const stationName = id => `STA ${String(Number(id.replace('sta',''))).padStart(2,'0')}`;
 const refs = () => Object.fromEntries(getReference(config).map(f=>[f.id,f]));
-const updateVideoResults = initVideoResults($('#video-study-results'));
+const updateVideoResults = initVideoResults($('#video-paper-results'));
+const updateVideoLive = initVideoLive($('#video-study-results'),{
+  onToggle:()=>$('#play').click(),
+  onReset:()=>$('#reset').click(),
+  onVideoChange:id=>{selectedVideo=id;$('#video-source').value=id;render();}
+});
 
 // Shared coordinates keep each station aligned with its airborne packet path.
 const starPositions={
@@ -175,6 +181,7 @@ function render(){
   spark('#voice-spark',samples.map(x=>x.flows.sta4.rtt));spark('#game-spark',samples.map(x=>x.flows.sta3.rtt));spark('#bulk-spark',samples.map(x=>x.flows.sta6.throughput));
   renderQueues();
   updateVideoResults({config,selectedVideo});
+  updateVideoLive({snapshot,samples,selectedVideo,modeChanges,running,speed,config});
   if(activeView==='lab')renderChart();
 }
 function renderQueues(){

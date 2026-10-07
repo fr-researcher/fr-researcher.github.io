@@ -1,0 +1,36 @@
+.video-live-results{grid-column:1 / -1;min-width:0;background:#fff;color:var(--text);font-family:var(--sans)}
+.vl-badge{font-size:11px;color:var(--muted);font-weight:500;white-space:nowrap}
+.vl-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:13px 16px 10px}
+.vl-stream-label{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted)}
+.vl-stream-label select{font-size:12px;background:#fff}
+.vl-modes{display:flex;border:1px solid #bfcad2;border-radius:3px;overflow:hidden}
+.vl-modes button{background:#fff;border:0;border-right:1px solid #cdd6dd;padding:6px 10px;color:var(--muted);font:12px var(--sans);min-height:30px;white-space:nowrap}
+.vl-modes button:last-child{border-right:0}
+.vl-modes button.active{background:#eaf1f6;color:var(--accent);font-weight:600}
+.vl-modes button:hover{background:#f0f4f7}
+.vl-playback{display:flex;align-items:center;gap:6px;margin-left:auto}
+.vl-playback button{background:#fff;border:1px solid #bfcad2;border-radius:3px;padding:5px 10px;min-height:30px;font:12px var(--sans);color:var(--text)}
+.vl-playback button:hover{background:#edf1f4}
+.vl-context{display:flex;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;padding:0 16px 13px;font-size:12px;line-height:1.6;color:var(--muted);border-bottom:1px solid var(--line)}
+.vl-context>span:first-child{color:var(--text);font-weight:500}
+.vl-clock{font-variant-numeric:tabular-nums;white-space:nowrap}
+.vl-charts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.vl-chart{min-width:0;margin:0;padding:15px 13px 13px;border-right:1px solid var(--line)}
+.vl-chart:last-child{border-right:0}
+.vl-chart-heading{display:flex;justify-content:space-between;align-items:baseline;gap:8px;min-height:32px}
+.vl-chart-heading h3{font-size:12px;font-weight:600;margin:0;line-height:1.5}
+.vl-chart-heading strong{font-size:20px;font-weight:500;line-height:1.3;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--text)}
+.vl-chart-heading [data-state="stalled"]{color:var(--red)}
+.vl-chart-heading [data-state="waiting"]{font-size:15px;color:var(--muted)}
+.vl-chart-heading small{font-size:10px;color:var(--muted);white-space:nowrap}
+.vl-svg{display:block;width:100%;height:auto;aspect-ratio:360 / 250;min-width:0;max-width:100%;font-family:var(--sans);overflow:visible}
+.vl-chart figcaption{font-size:11px;line-height:1.6;color:var(--muted);margin:6px 0 0;min-height:36px}
+.vl-legend{display:flex;align-items:center;flex-wrap:wrap;gap:6px 17px;padding:11px 16px;font-size:11px;color:var(--muted);border-top:1px solid var(--line)}
+.vl-legend>span{display:flex;align-items:center;gap:6px}
+.vl-stall-key{display:inline-block;width:13px;height:9px;background:#f8e9e6;border:1px solid #e2b9b1}
+.vl-mode-key{display:inline-block;width:14px;border-top:1px dashed #899ba8}
+.video-live-results .vl-footer{margin:0;padding:11px 16px 14px;display:flex;justify-content:space-between;align-items:center;gap:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.vl-footer p{margin:0;line-height:1.6;max-width:960px}
+.vl-footer .text-button{flex-shrink:0;font-size:11px}
+@media(max-width:1050px){.vl-charts{grid-template-columns:1fr}.vl-chart{border-right:0;border-bottom:1px solid var(--line);padding:16px}.vl-chart:last-child{border-bottom:0}.vl-chart>div[data-vl-chart]{max-width:580px;margin:0 auto}.vl-chart-heading{min-height:30px}.vl-chart figcaption{min-height:0}.vl-svg{max-height:340px}.vl-chart-heading h3{font-size:13px}}
+@media(max-width:600px){.vl-toolbar{padding:12px;gap:10px}.vl-stream-label{font-size:11px}.vl-stream-label select{font-size:11px}.vl-modes button{padding:6px 8px;font-size:11px}.vl-playback{margin-left:0}.vl-playback button{font-size:11px}.vl-context{padding:0 12px 11px;font-size:11px;gap:4px}.vl-chart{padding:13px 10px}.vl-chart-heading h3{font-size:12px}.vl-chart-heading strong{font-size:19px}.vl-chart figcaption{font-size:11px}.vl-legend{padding:10px 12px;gap:6px 13px}.video-live-results .vl-footer{padding:11px 12px 13px;align-items:flex-start;flex-direction:column;gap:9px}}

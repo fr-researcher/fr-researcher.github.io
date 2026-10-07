@@ -59,7 +59,7 @@ export function initVideoResults(root) {
   const prefix = `video-study-${++instances}`;
   root.classList.add('video-study-results');
   root.innerHTML = `
-    <div class="panel-heading"><h2>Video indicators</h2><span class="video-paper-badge">Paper results</span></div>
+    <div class="panel-heading"><h2>Video study reference</h2><span class="video-paper-badge">Paper results</span></div>
     <div class="video-study-body">
       <p class="video-study-context" data-video-context aria-live="polite"></p>
       <div class="video-indicator-definitions">

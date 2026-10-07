@@ -7,7 +7,8 @@
   <link rel="canonical" href="https://fr-researcher.github.io/edca-lab/">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='4' fill='%232f5d83'/%3E%3Cpath d='M8 16Q20 5 32 16M12 22Q20 14 28 22M17 28Q20 25 23 28' fill='none' stroke='%23ffffff' stroke-width='3'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css?v=20261007-wireless">
-  <link rel="stylesheet" href="video-results.css?v=20261007-video">
+  <link rel="stylesheet" href="video-results.css?v=20261007-live-video">
+  <link rel="stylesheet" href="video-live.css?v=20261007-live-video">
 </head>
 <body>
   <svg class="icon-defs" aria-hidden="true"><defs>
@@ -101,7 +102,7 @@
 
         <div class="detail-grid">
           <section class="panel experience"><div class="panel-heading"><div><h2>Video playback</h2><span class="mini-tag">Emulated playback</span></div><select id="video-source" aria-label="Video to display"><option value="sta1">STA 01 · 2160p</option><option value="sta5">STA 05 · 1440p</option></select></div><div class="video-scene"><canvas id="video-canvas" aria-label="Animated OWIN6G logo showing emulated video motion, resolution and stalls"></canvas><div class="video-top"><span>OWIN6G · Logo motion</span><span id="video-overlay-quality">Waiting</span></div><div class="stall-overlay" id="stall-overlay"><span class="loader"></span><strong>Loading video</strong><small>The buffer is empty</small></div><div class="video-bottom"><span class="video-play-icon">▶</span><div><i id="video-buffer-bar"></i></div><span id="video-frame-status">Buffer 0.0 s</span></div></div><div class="experience-caption"><span class="small-dot violet-bg"></span><a href="https://owin6g.eu/" target="_blank" rel="noopener noreferrer" class="logo-source">OWIN6G logo</a> · Motion follows the emulated buffer.<span id="video-summary">TCP flow · MPEG-DASH</span></div></section>
-          <section class="panel video-study-results" id="video-study-results" aria-label="Video study results"></section>
+          <section class="panel video-live-panel" id="video-study-results" aria-label="Live video indicators"></section>
           <section class="panel"><div class="panel-heading"><div><h2>AP queues</h2><span class="mini-tag">Downlink</span></div><span class="muted small">Illustrative occupancy</span></div><div class="queues" id="queues"></div><div class="queue-footnote">AC_BK receives no traffic in this scenario. Queues and packets are visual representations.</div></section>
           <section class="panel latency-panel"><div class="panel-heading"><div><h2>WLAN round-trip time</h2></div><select id="chart-service" aria-label="Service shown in the latency chart"><option value="sta4">Voice</option><option value="sta3">Gaming</option><option value="sta2">Video call</option></select></div><div class="chart-labels"><span><i class="legend-line lime-bg"></i>Illustrative mean RTT</span><span><i class="legend-dash"></i>WLAN target</span><span class="mono">ms · log scale</span></div><div class="chart-wrap"><svg id="rtt-chart" viewBox="0 0 640 210" role="img" aria-label="Illustrative mean WLAN RTT in milliseconds"></svg></div><div class="chart-bottom"><span id="chart-insight">Enable QoS-ML to observe the change in priority.</span><span class="mini-tag">0–60 s</span></div></section>
         </div>
@@ -113,6 +114,7 @@
         <div class="comparison-scenario" id="comparison-scenario"></div><div class="compare-cards" id="compare-cards"></div>
         <div class="panel comparison-table-wrap"><table class="comparison-table"><thead><tr><th>Service / metric</th><th>Best Effort</th><th>QoS-ML</th><th>QoS-App</th><th>Evaluation criterion</th></tr></thead><tbody id="comparison-rows"></tbody></table></div>
         <div class="comparison-note"><svg><use href="#i-info"/></svg><div><p>Mean RTT is the mean of the five per-seed means. P99 uses RTT samples pooled across those seeds. TCP throughput is the mean across five seeds, from t = 7 s to the last received packet. The values are rounded labels from Figures 9–11 and 13–15 of the supplied draft.</p><p>The video rate criteria are 16.88 Mbit/s for 2160p and 8.44 Mbit/s for 1440p (Table 6). The IP throughput includes protocol headers. Meeting a rate criterion alone does not establish uninterrupted playback: the highest resolution, no stalls and a stable buffer are also required (Figures 12 and 16).</p><p>These results are independent of the animated session. QoS-App is a source-marking reference, not a strict upper bound on QoS-ML performance.</p></div></div>
+        <section class="panel video-study-results" id="video-paper-results" aria-label="Video study reference"></section>
         <div class="takeaway-grid"><article><h3>Latency</h3><p>With BE neighbors, QoS-ML meets all three WLAN RTT targets. With QoS-App neighbors, voice meets its target, gaming exceeds 20 ms, and video calls exceed 100 ms with two neighbors.</p></article><article><h3>Video playback</h3><p>With BE neighbors, both videos retain their maximum resolution. With QoS-App neighbors, QoS-ML restores maximum resolution after the initial observation period. QoS-App retains maximum resolution from the start.</p></article><article><h3>Throughput trade-off</h3><p>Prioritization redistributes access to the channel. With two BE neighbors, mean TCP download throughput is 49.0 Mbit/s under BE and 41.3 Mbit/s under QoS-ML.</p></article></div>
       </section>
 
@@ -127,5 +129,5 @@
     </main>
   </div>
   <dialog id="log-dialog"><div class="panel-heading"><h2>Session log</h2><button class="icon-button" id="close-log" aria-label="Close log">×</button></div><div id="log-entries"></div><div class="dialog-footer">Illustrative model events · simulation time</div></dialog>
-  <script type="module" src="app.js?v=20261007-video"></script>
+  <script type="module" src="app.js?v=20261007-live-video"></script>
 </body></html>
