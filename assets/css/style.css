@@ -4,6 +4,7 @@
 
 /* ── Variables ── */
 :root {
+  color-scheme: dark;
   --bg:        #0d1117;
   --bg2:       #161b22;
   --bg3:       #21262d;
@@ -22,6 +23,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --bg:        #ffffff;
   --bg2:       #f6f8fa;
   --bg3:       #eaeef2;
@@ -123,7 +125,7 @@ img { max-width: 100%; display: block; }
 .theme-toggle:hover { background: var(--border); }
 [data-theme="light"] .icon-moon,
 [data-theme="dark"] .icon-sun,
-body:not([data-theme]) .icon-sun { display: none; }
+html:not([data-theme]) .icon-sun { display: none; }
 [data-theme="light"] .icon-sun { display: inline; }
 .nav-burger {
   display: none;

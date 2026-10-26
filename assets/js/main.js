@@ -1,13 +1,13 @@
 // ── Theme toggle ──────────────────────────
 const btn = document.getElementById('themeToggle');
-const saved = localStorage.getItem('theme') || 'dark';
-document.documentElement.setAttribute('data-theme', saved);
+// Start each page load in the white theme; the toggle applies to this visit.
+document.documentElement.setAttribute('data-theme', 'light');
 
 btn.addEventListener('click', () => {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('theme', next);
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', next === 'light' ? '#ffffff' : '#0d1117');
 });
 
 // ── Mobile nav ────────────────────────────
