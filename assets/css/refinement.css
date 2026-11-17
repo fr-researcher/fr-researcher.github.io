@@ -49,7 +49,7 @@ button, input, textarea, select { font-family: inherit; }
 .hero { min-height: 100svh; padding: 108px 24px 88px; }
 .hero-content { width: 100%; max-width: 700px; }
 .hero-avatar { width: 320px; height: 320px; margin-bottom: 28px; }
-.hero h1 { font-size: clamp(2rem, 4.5vw, 3.2rem); margin-bottom: 16px; }
+.hero h1 { font-size: 2rem; margin-bottom: 16px; }
 .hero-title { font-family: var(--font); letter-spacing: 0; line-height: 1.7; }
 .hero-sub { max-width: 580px; line-height: 1.8; margin-bottom: 24px; }
 .badge { background: var(--bg2); padding: 5px 13px; }
@@ -116,8 +116,8 @@ button, input, textarea, select { font-family: inherit; }
 @media (min-width: 861px) {
   :root { --copy-size: .875rem; }
   .hero { min-height: auto; padding: 96px 24px 68px; }
-  .hero-avatar { width: 240px; height: 240px; margin-bottom: 20px; }
-  .hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
+  .hero-avatar { width: 280px; height: 280px; margin-bottom: 20px; }
+  .hero h1 { font-size: 2rem; margin-bottom: 12px; }
   .hero-title { font-size: .9375rem; margin-bottom: 12px; }
   .hero-sub { font-size: 1rem; line-height: 1.65; margin-bottom: 20px; }
   .hero-badges { margin-bottom: 20px; }
@@ -166,7 +166,8 @@ button, input, textarea, select { font-family: inherit; }
 @media (max-width: 640px) {
   #gallery > .container { width: calc(100% - 32px); padding: 20px; }
   .hero { padding: 96px 24px 72px; }
-  .hero-avatar { width: min(260px,75vw); height: auto; aspect-ratio: 1; margin-bottom: 24px; }
+  .hero-avatar { width: min(280px,75vw); height: auto; aspect-ratio: 1; margin-bottom: 24px; }
+  .hero h1 { font-size: 1.75rem; }
   .hero-title { font-size: .9375rem; }
   .hero-sub { font-size: 1rem; }
   .hero-badges { margin-bottom: 24px; }
