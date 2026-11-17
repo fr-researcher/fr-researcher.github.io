@@ -31,6 +31,17 @@ a:focus-visible, button:focus-visible {
 }
 button, input, textarea, select { font-family: inherit; }
 .social-row svg text { font-family: var(--font); }
+.ui-icon { display: inline-block; width: 18px; height: 18px; flex: 0 0 auto; vertical-align: -.18em; }
+.project-icon, .contact-icon { display: flex; align-items: center; color: var(--accent); flex-shrink: 0; }
+.project-icon .ui-icon { width: 26px; height: 26px; }
+.contact-icon .ui-icon { width: 24px; height: 24px; }
+.cv-block-title { display: flex; align-items: center; gap: 8px; }
+.cv-block-title .ui-icon { color: var(--accent); }
+.btn .ui-icon, .nav-links .ui-icon, .nav-mobile .ui-icon, .project-links .ui-icon { width: 16px; height: 16px; }
+.nav-links .ui-icon { margin-left: 5px; }
+.theme-toggle { line-height: 1; }
+.theme-toggle .ui-icon { vertical-align: middle; }
+.nav-burger .ui-icon, .lb-close .ui-icon, .lb-prev .ui-icon, .lb-next .ui-icon { width: 22px; height: 22px; }
 .nav-brand { flex-shrink: 0; }
 .nav-links { gap: 24px; }
 .nav-links a { display: inline-flex; align-items: center; min-height: 44px; }
