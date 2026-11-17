@@ -1,12 +1,19 @@
 /* Visual refinements shared across the existing site's sections. */
 :root { --radius: 12px; }
 [data-theme="light"] {
-  --bg2: #f7f9fc;
-  --bg3: #eef2f7;
+  --bg: #e9ebee;
+  --bg2: #f1f2f4;
+  --bg3: #e2e5e9;
   --border: #dce3eb;
   --text: #202b39;
   --text-muted: #536174;
 }
+[data-theme="light"] .hero-bg { background: none; }
+[data-theme="light"] .pub-card,
+[data-theme="light"] .project-card,
+[data-theme="light"] .cv-block,
+[data-theme="light"] .info-card,
+[data-theme="light"] .contact-card { background: #ffffff; }
 html { scroll-padding-top: 76px; }
 body { -webkit-font-smoothing: antialiased; }
 ::selection { background: #d6e7ff; color: #173963; }
