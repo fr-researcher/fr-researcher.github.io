@@ -1,13 +1,13 @@
 // ── Theme toggle ──────────────────────────
 const btn = document.getElementById('themeToggle');
-// Start each page load in the white theme; the toggle applies to this visit.
+// Start each page load in the light theme; the toggle applies to this visit.
 document.documentElement.setAttribute('data-theme', 'light');
 
 btn.addEventListener('click', () => {
   const current = document.documentElement.getAttribute('data-theme');
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  document.querySelector('meta[name="theme-color"]').setAttribute('content', next === 'light' ? '#ffffff' : '#0d1117');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', next === 'light' ? '#e9ebee' : '#0d1117');
 });
 
 // ── Mobile nav ────────────────────────────
