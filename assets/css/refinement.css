@@ -83,6 +83,43 @@ button { font-family: inherit; }
 .contact-card span { overflow-wrap: anywhere; }
 [data-theme="light"] .pub-type.dataset { color: #7143ad; }
 [data-theme="light"] .pub-type.thesis { color: #a34416; }
+/* Compact desktop proportions, including Full HD with display scaling. */
+@media (min-width: 861px) {
+  .hero { min-height: auto; padding: 96px 24px 68px; }
+  .hero-avatar { width: 240px; height: 240px; margin-bottom: 20px; }
+  .hero h1 { font-size: 2.5rem; margin-bottom: 12px; }
+  .hero-title { font-size: .9375rem; margin-bottom: 12px; }
+  .hero-sub { font-size: 1rem; line-height: 1.65; margin-bottom: 20px; }
+  .hero-badges { margin-bottom: 20px; }
+  .hero-links { margin-bottom: 16px; }
+  .btn { min-height: 42px; padding: 8px 18px; }
+  .social-row a { width: 36px; height: 36px; }
+  .social-row svg { width: 16px; height: 16px; }
+  .scroll-hint { bottom: 10px; }
+  .scroll-arrow { height: 20px; }
+  .tesla-quote { padding: 32px 24px; }
+  .tesla-quote blockquote { font-size: 1rem; }
+  .section { padding: 60px 0; }
+  .section-title { font-size: 1.75rem; }
+  .section-sub { margin-bottom: 24px; }
+  .pub-filters { margin-bottom: 24px; }
+  .pub-list { gap: 16px; }
+  .pub-card { padding: 20px 24px; gap: 20px; }
+  .pub-title { font-size: 1rem; line-height: 1.45; margin-bottom: 6px; }
+  .pub-abstract { line-height: 1.65; margin: 10px 0 12px; }
+  .projects-grid { gap: 20px; }
+  .project-card { padding: 22px; gap: 12px; }
+  .project-card h3 { font-size: 1rem; }
+  .project-card p { line-height: 1.65; }
+  .cv-block { padding: 24px; }
+  .cv-items { gap: 18px; }
+  #gallery > .container { padding: 24px; }
+  .gallery-masonry { column-gap: 16px; }
+  .gallery-item { margin-bottom: 16px; }
+}
+@media (min-width: 1200px) {
+  .gallery-masonry { columns: 4; }
+}
 @media (max-width: 1000px) {
   .nav-inner { gap: 20px; }
   .nav-links { gap: 15px; }
